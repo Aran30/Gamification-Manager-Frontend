@@ -90,8 +90,13 @@ export class GameElement extends LitElement {
       );*/
   }
   _onGameItemClicked(game) {
-    this.gameId = game; d
+    this.gameId = game; 
     console.log(game);
+    for(var i=0; i<this.games.length;i++){
+      console.log(this.games[i])
+      this.shadowRoot.querySelector("#select" + this.games[i]).disabled = false;
+    }
+    this.shadowRoot.querySelector("#select" + game).disabled = true;
   }
 
   _addGame() {
@@ -199,8 +204,8 @@ export class GameElement extends LitElement {
       <h2>Gamification Game Manager</h2>
       <paper-input id="addGameInput" always-float-label label="Floating label" placeholder="Game Name"></paper-input><paper-button raised id="addGameButton">Add Game!</paper-button>
   ${this.games.map(game => html`
-  <paper-card class="project-item-card" @click="${() => this._onGameItemClicked(game)}">
-  <paper-button raised id="testing">${game}</paper-button>
+  <paper-card  class="project-item-card" @click="${() => this._onGameItemClicked(game)}">
+  <paper-button raised id=select${game}>${game}</paper-button>
   </paper-card>
 `)}
         <paper-button raised id="reloadButton">Reload Games</paper-button>
