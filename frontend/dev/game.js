@@ -1,6 +1,6 @@
 import { LitElement, html } from "lit-element";
 // global variables
-var aaron, games, url, client,gameId, memberId, loginStatus, notification;
+var aaron, games, url, client, gameId, memberId, loginStatus, notification;
 
 export class GameElement extends LitElement {
   static get properties() {
@@ -16,12 +16,13 @@ export class GameElement extends LitElement {
       },
     };
   }
-  constructor(){
+  constructor() {
     super();
-    if(this.games==null){
+    this.aaron = ""
+    if (this.games == null) {
       this.games = ["dd"]
     }
-   
+
   }
 
   firstUpdated(changedProperties) {
@@ -30,12 +31,15 @@ export class GameElement extends LitElement {
     button.addEventListener("click", (event) =>
       this.checkAndRegisterUserAgent(event)
     );
+    this.shadowRoot.querySelector("#addGameButton").addEventListener("click", (event) =>
+      this._addGame()
+    );
     url = "http://127.0.0.1:8080/";
   }
 
   authenticateUser(user, password) {
     var token = user + ":" + password;
-    console.log("token");
+    console.log(token);
     // Should i be encoding this value????? does it matter???
     // Base64 Encoding -> btoa
     var hash = btoa(token);
@@ -44,12 +48,15 @@ export class GameElement extends LitElement {
   }
 
   checkAndRegisterUserAgent(event) {
+    console.log(localStorage.getItem("userInfo"))
+    var userInfo = JSON.parse(localStorage.getItem("userInfo"))
+    this.aaron = this.authenticateUser(userInfo.preferred_username, userInfo.sub)
     // var log = authenticateUser(oidc_userinfo.loginName, oidc_userinfo.sub);
     console.log(aaron);
     console.log(event);
     fetch(url + "gamification/games/validation", {
       method: "POST",
-      headers: { Authorization: aaron },
+      headers: { Authorization: this.aaron },
     })
       .then((response) => {
         if (response.ok) {
@@ -82,14 +89,42 @@ export class GameElement extends LitElement {
           }
       );*/
   }
-  _onGameItemClicked(game){
-    this.gameId = game; 
+  _onGameItemClicked(game) {
+    this.gameId = game; d
     console.log(game);
   }
+
+  _addGame() {
+    var gameName = this.shadowRoot.querySelector("#addGameInput").value;
+    console.log(this.shadowRoot.querySelector("#addGameInput"))
+    console.log(gameName)
+    let formData = new FormData();
+    formData.append('gameid', gameName);
+    fetch(url + "gamification/games/data", {
+      method: "POST",
+      headers: { Authorization: this.aaron },
+      body: formData
+
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        this.getGamesData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
+
   getGamesData() {
     fetch(url + "gamification/games/list/separated", {
       method: "GET",
-      headers: { Authorization: aaron },
+      headers: { Authorization: this.aaron },
     })
       .then((response) => {
         console.log(response);
@@ -104,7 +139,7 @@ export class GameElement extends LitElement {
         data.forEach(element => {
           this.games.push(element.game_id)
         });
-    
+
         //    $("button#addnewgame").off('click');
         //   $("button#addnewgame").on('click', function(event) {
         //      $("#createnewgame").modal('toggle');
@@ -162,6 +197,7 @@ export class GameElement extends LitElement {
   render() {
     return html`
       <h2>Gamification Game Manager</h2>
+      <paper-input id="addGameInput" always-float-label label="Floating label" placeholder="Game Name"></paper-input><paper-button raised id="addGameButton">Add Game!</paper-button>
   ${this.games.map(game => html`
   <paper-card class="project-item-card" @click="${() => this._onGameItemClicked(game)}">
   <paper-button raised id="testing">${game}</paper-button>

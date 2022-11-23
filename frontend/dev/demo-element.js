@@ -1,5 +1,4 @@
 import { LitElement, html } from 'lit-element';
-import '../project-list.js';
 import Auth from "../util/auth";
 import Common from "../util/common";
 import 'las2peer-frontend-statusbar/las2peer-frontend-statusbar.js';
@@ -28,9 +27,10 @@ export class DemoElement extends LitElement {
   }
 
   handleLogin(event) {
-    console.log(event.detail.access_token);
-    Auth.setAuthDataToLocalStorage(event.detail.access_token);
-
+    console.log(event.detail.profile);
+   // Auth.setAuthDataToLocalStorage(event.detail.access_token);
+   localStorage.removeItem("userInfo")
+    localStorage.setItem("userInfo",JSON.stringify(event.detail.profile))
     var url = "https://api.learning-layers.eu/auth/realms/main/protocol/openid-connect/userinfo";
     fetch(url, {method: "GET", headers: {
       "Authorization": "Bearer " + Auth.getAccessToken()
@@ -67,9 +67,6 @@ export class DemoElement extends LitElement {
     autoAppendWidget=true
     loginoidcprovider="https://auth.las2peer.org/auth/realms/main"
     suppress-error-toast=false
-    oidcpopupsigninurl="/callbacks/popup-signin-callback.html"
-    oidcpopupsignouturl="/callbacks/popup-signout-callback.html"
-    oidcsilentsigninturl="/callbacks/silent-callback.html"
     ></las2peer-frontend-statusbar>
       <h2>Project list with "All Projects" enabled</h2>
       <div style="display: flex">
