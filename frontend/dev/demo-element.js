@@ -65,7 +65,6 @@ export class DemoElement extends LitElement {
     oidcclientid=bdda7396-3f6d-4d83-ac21-65b4069d0eab
     suppresswidgeterror="true"
     autoAppendWidget=true
-    oidcAuthority="https://api.learning-layers.eu/o/oauth2"
     loginoidcprovider="https://auth.las2peer.org/auth/realms/main"
     suppress-error-toast=false
     oidcpopupsigninurl="/callbacks/popup-signin-callback.html"
