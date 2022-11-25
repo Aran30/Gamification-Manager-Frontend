@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit-element';
+import { LitElement, html } from 'lit';
 import Auth from "../util/auth";
 import Common from "../util/common";
 import 'las2peer-frontend-statusbar/las2peer-frontend-statusbar.js';
