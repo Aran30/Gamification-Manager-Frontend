@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 // global variables
 
-export class LevelElement extends LitElement {
+export class BadgeElement extends LitElement {
   static get properties() {
     return {
       aaron: {
@@ -16,10 +16,7 @@ export class LevelElement extends LitElement {
       url: {
         type: String,
       },
-      levelsIndex: {
-        type: Array,
-      },
-      levels: {
+      badges: {
         type: Array,
       },
     };
@@ -27,28 +24,50 @@ export class LevelElement extends LitElement {
   constructor() {
     super();
     this.aaron = "";
-    this.levels = [];
     this.url = "http://127.0.0.1:8080/";
+    this.badges = [];
     this.oldGame = undefined;
     this.game = undefined;
   }
 
   firstUpdated(changedProperties) {
     console.log("iekrh2");
-    const button = this.shadowRoot.querySelector("#reloadButtonLevel");
+  /*  const button = this.shadowRoot.querySelector("#reloadButtonLevel");
     this.shadowRoot
       .querySelector("#addLevelButton")
-      .addEventListener("click", (event) => this._addLevel());
+      .addEventListener("click", (event) => this._addLevel());*/
     this.url = "http://127.0.0.1:8080/";
   }
 
   updated() {
-    console.log(this.game + "fetching level data" + this.levels.length);
+    console.log(this.game + "fetching level data" + this.oldGame);
     if (this.game != this.oldGame) {
       this.oldGame = this.game;
       console.log("fetching level data");
-      this.getLevelData();
+      this.getBadgeData();
     }
+  }
+
+  getBadgeData() {
+    fetch(this.url + "gamification/badges/" + this.game, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        if (data != undefined) {
+          this.badges = data.rows;
+          console.log("done");
+          console.log(this.badges);
+        }
+      });
   }
 
   _addLevel() {
@@ -86,44 +105,21 @@ export class LevelElement extends LitElement {
         });*/
       });
   }
-  // i need to change the level service code, its just thrash atm
-  getLevelData() {
-    fetch(this.url + "gamification/levels/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.levels = data.rows;
-          console.log("done");
-          console.log(this.levels);
-        }
-      });
-  }
 
-  _deleteLevel(level){
-    var levelNumber = level.number
-    console.log(levelNumber)
-    fetch(this.url + "gamification/levels/" + this.game + "/" + levelNumber, {
+  _deleteBadge(badge){
+    var badgeNumber = badge.id
+    console.log(badgeNumber)
+    fetch(this.url + "gamification/badges/" + this.game + "/" + badgeNumber, {
       method: "Delete",
       headers: { Authorization: this.aaron },
     })
       .then((response) => {
         console.log(response);
 
-        if (response.ok || JSON.stringify(response).toLocaleLowerCase().includes("delete file failed")) {
+        if (response.ok) {
           console.log("good response for get games gamers");
-          this.levels.pop(level)
+          this.badges.pop(badge)
           this.requestUpdate()
-          console.log(this.levels)
           return response.json();
 
         }
@@ -134,7 +130,15 @@ export class LevelElement extends LitElement {
       });
 
   }
-
+  // i need to change the level service code, its just thrash atm
+ 
+returnImage(badge){
+  if(badge.base64==""){
+    return html``;
+  } else {
+    return html`<img class="card-img-top" src="data:image/png;base64, ${badge.base64}" />`
+  }
+}
 
   render() {
     return html`
@@ -150,56 +154,27 @@ export class LevelElement extends LitElement {
         integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
         crossorigin="anonymous"
       ></script>
-
-      <h1>Currently Selected: ${this.game}</h1>
-      <h2>Gamification Level Manager</h2>
-
-      ${this.levels.map(
-        (level) => html`
+      <h2>Gamification Badge Manager</h2>
+      ${this.badges.map(
+        (badge) => html`
           <div class="card border-dark mb-3" style="width: 18rem;">
+          ${this.returnImage(badge)}
             <div class="card-body text-dark">
-              <h5 class="card-title">${level.name}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">${level.number}</h6>
-              <p class="card-text">Required points: ${level.pointValue}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${level.number} @click="${() => this._deleteLevel(level)}">Delete</a>
+              <h5 class="card-title">${badge.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">${badge.id}</h6>
+              <p class="card-text">Required points: ${badge.description}</p>
+              <a href="#" class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._deleteBadge(badge)}">Delete</a>
             </div>
           </div>
         `
       )}
-      <div class="form-floating mb-3">
-        <input
-          id="addLevelNameInput"
-          class="form-control"
-          placeholder="Level Name"
-        />
-        <label for="floatingInput">Level Name</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
-          id="addLevelNumberInput"
-          class="form-control"
-          placeholder="Level Number"
-        />
-        <label for="floatingInput">Level Number</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
-          id="addLevelPointsInput"
-          class="form-control"
-          placeholder="Level Points"
-        />
-        <label for="floatingInput">Level Points</label>
-        <button
-          type="button"
-          id="addLevelButton"
-          @click="${() => this._addLevel()}"
-          class="btn btn-primary"
-        >
-          Add Level!
-        </button>
-      </div>
+      <div class="mb-3">
+   <label for="formFile" class="form-label">Default file input example</label>
+    <input class="form-control" type="file" id="formFile">
+    </div>
+
     `;
   }
 }
 
-window.customElements.define("level-element", LevelElement);
+window.customElements.define("badge-element", BadgeElement);
