@@ -24,7 +24,7 @@ export class AchievementElement extends LitElement {
   constructor() {
     super();
     this.aaron = "";
-    this.achievements= [];
+    this.achievements = [];
     this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
@@ -32,60 +32,24 @@ export class AchievementElement extends LitElement {
 
   firstUpdated(changedProperties) {
     console.log("iekrh2");
- /*   const button = this.shadowRoot.querySelector("#reloadButtonLevel");
-    this.shadowRoot
-      .querySelector("#addLevelButton")
-      .addEventListener("click", (event) => this._addLevel());*/
+    /*   const button = this.shadowRoot.querySelector("#reloadButtonLevel");
+       this.shadowRoot
+         .querySelector("#addLevelButton")
+         .addEventListener("click", (event) => this._addLevel());*/
     this.url = "http://127.0.0.1:8080/";
   }
 
   updated() {
-    console.log(this.game + "fetching level data" + this.levels.length);
+    console.log(this.game + "fetching level data" + this.achievements.length);
     if (this.game != this.oldGame) {
       this.oldGame = this.game;
       console.log("fetching level data");
-  //    this.getLevelData();
+      this.getAchievementData();
     }
   }
 
-  _addAchievement() {
-  /*  var levelName = this.shadowRoot.querySelector("#addLevelNameInput").value;
-    if (levelName == "") {
-      console.log(this.levels)
-      return;
-    }
-    var levelNumber = this.shadowRoot.querySelector(
-      "#addLevelNumberInput"
-    ).value;
-    var levelPoints = this.shadowRoot.querySelector(
-      "#addLevelPointsInput"
-    ).value;
-    console.log(levelName + levelNumber + levelPoints);
-    let formData = new FormData();
-    formData.append("levelnum", levelNumber);
-    formData.append("levelname", levelName);
-    formData.append("levelpointvalue", levelPoints);
-    fetch(this.url + "gamification/levels/" + this.game, {
-      method: "POST",
-      headers: { Authorization: this.aaron },
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-      })
-      .then((data) => {
-        this.getLevelData();
-        /*      $("button#addnewgame").off('click');
-        $("button#addnewgame").on('click', function(event) {
-            $("#createnewgame").modal('toggle');
-        });
-      });*/
-  }
-  // i need to change the level service code, its just thrash atm
- /* getLevelData() {
-    fetch(this.url + "gamification/levels/" + this.game, {
+  getAchievementData() {
+    fetch(this.url + "gamification/achievements/" + this.game, {
       method: "GET",
       headers: { Authorization: this.aaron },
     })
@@ -99,37 +63,80 @@ export class AchievementElement extends LitElement {
       .then((data) => {
         console.log(data);
         if (data != undefined) {
-          this.levels = data.rows;
+          this.achievements = data.rows;
           console.log("done");
-          console.log(this.levels);
+          console.log(this.achievements);
         }
       });
-  }*/
+  }
 
-  _deleteLevel(level) {
- /*   var levelNumber = level.number
-    console.log(levelNumber)
-    fetch(this.url + "gamification/levels/" + this.game + "/" + levelNumber, {
+  _addAchievement() {
+
+    var achievementName = this.shadowRoot.querySelector("#addAchievementNameInput").value;
+    var achievementId = this.shadowRoot.querySelector(
+      "#addAchievementIdInput"
+    ).value;
+    var achievementDesc = this.shadowRoot.querySelector(
+      "#addAchievementDescInput"
+    ).value;
+    var achievementNot = this.shadowRoot.querySelector(
+      "#addAchievementNotificationInput"
+    ).value;
+    var achievementPoints = this.shadowRoot.querySelector(
+      "#addAchievementPointsInput"
+    ).value;
+    if(isNaN(achievementPoints)){
+      achievementPoints = 0
+    }
+    var achievementBadgeId = this.shadowRoot.querySelector(
+      "#addAchievementBadgeInput"
+    ).value;
+    let formData = new FormData();
+    formData.append("achievementpointvalue", achievementPoints);
+    formData.append("achievementname", achievementName);
+    formData.append("achievementid", achievementId);
+    formData.append("achievementdesc", achievementDesc);
+    formData.append("achievementbadgeid", achievementBadgeId);
+    fetch(this.url + "gamification/achievements/" + this.game, {
+      method: "POST",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getAchievementData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
+
+  _deleteAchievement(achievement) {
+    var achievementNumber = achievement.id
+    fetch(this.url + "gamification/achievements/" + this.game + "/" + achievementNumber, {
       method: "Delete",
       headers: { Authorization: this.aaron },
     })
       .then((response) => {
         console.log(response);
 
-        if (response.ok || JSON.stringify(response).toLocaleLowerCase().includes("delete file failed")) {
+        if (response.ok) {
           console.log("good response for get games gamers");
-          this.levels.pop(level)
-          this.requestUpdate()
-          console.log(this.levels)
+          this.achievements.pop(achievement);
+          this.requestUpdate();
           return response.json();
-
         }
       })
       .then((data) => {
         console.log(data);
 
       });
-*/
+
   }
 
 
@@ -148,51 +155,78 @@ export class AchievementElement extends LitElement {
         crossorigin="anonymous"
       ></script>
 
-      <h1>Currently Selected: ${this.game}</h1>
-      <h2>Gamification Level Manager</h2>
+      <h2>Gamification Achievement Manager</h2>
 
-      ${this.achievement.map(
-      (achievements) => html`
+      ${this.achievements.map(
+      (achievement) => html`
           <div class="card border-dark mb-3" style="width: 18rem;">
             <div class="card-body text-dark">
-              <h5 class="card-title">${level.name}</h5>
-              <h6 class="card-subtitle mb-2 text-muted">${level.number}</h6>
-              <p class="card-text">Required points: ${level.pointValue}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${level.number} @click="${() => this._deleteLevel(level)}">Delete</a>
+              <h5 class="card-title">${achievement.name}</h5>
+              <h6 class="card-subtitle mb-2 text-muted">${achievement.id}</h6>
+              <p class="card-text">${achievement.description}</p>
+              <p class="card-text"> Rewarded points: ${achievement.pointValue}</p>
+              <p class="card-text"> Rewarded badge: ${achievement.badgeId}</p>
+              <p class="card-text"> Notification message: ${achievement.notificationMessage}</p>
+              <a href="#" class="btn btn-primary" id=buttonLevel${achievement.number} @click="${() => this._deleteAchievement(achievement)}">Delete</a>
             </div>
           </div>
         `
     )}
       <div class="form-floating mb-3">
         <input
-          id="addLevelNameInput"
+          id="addAchievementNameInput"
           class="form-control"
-          placeholder="Level Name"
+          placeholder="Achievement Name"
         />
-        <label for="floatingInput">Level Name</label>
+        <label for="floatingInput">Achievement Name</label>
       </div>
       <div class="form-floating mb-3">
         <input
-          id="addLevelNumberInput"
+          id="addAchievementIdInput"
           class="form-control"
-          placeholder="Level Number"
+          placeholder="Achievement Id"
         />
-        <label for="floatingInput">Level Number</label>
+        <label for="floatingInput">Achievement Id</label>
       </div>
       <div class="form-floating mb-3">
+      <input
+        id="addAchievementDescInput"
+        class="form-control"
+        placeholder="Achievement Description"
+      />
+      <label for="floatingInput">Achievement Description</label>
+    </div>
+    <div class="form-floating mb-3">
+    <input
+      id="addAchievementNotificationInput"
+      class="form-control"
+      placeholder="Achievement Notification"
+    />
+    <label for="floatingInput">Achievement Notification</label>
+  </div>
+  <div class="form-floating mb-3">
+  <input
+    id="addAchievementBadgeInput"
+    class="form-control"
+    placeholder="Achievement Badge Id"
+  />
+  <label for="floatingInput">Achievement Badge Id</label>
+</div>
+      <div class="form-floating mb-3">
         <input
-          id="addLevelPointsInput"
+          id="addAchievementPointsInput"
           class="form-control"
-          placeholder="Level Points"
+          placeholder="Point Rewards"
+          type=number
         />
-        <label for="floatingInput">Level Points</label>
+        <label for="floatingInput">Point Rewards</label>
         <button
           type="button"
-          id="addLevelButton"
-          @click="${() => this._addLevel()}"
+          id="addAchievementButton"
+          @click="${() => this._addAchievement()}"
           class="btn btn-primary"
         >
-          Add Level!
+          Add Achievement!
         </button>
       </div>
     `;

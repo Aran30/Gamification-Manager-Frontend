@@ -1,6 +1,7 @@
 import { LitElement, html } from "lit";
 import "./level.js";
 import "./badge.js";
+import "./achievements.js";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 // global variables
 var aaron, games, url, gameChosen, gameId, memberId, loginStatus, notification;
