@@ -256,6 +256,7 @@ ${this.games.map(
 
 <level-element .aaron=${this.aaron} .game=${this.gameId}></level-element>
 <badge-element .aaron=${this.aaron} .game=${this.gameId}></badge-element>
+<achievement-element .aaron=${this.aaron} .game=${this.gameId}></achievement-element>
 </div>
        
       </div>

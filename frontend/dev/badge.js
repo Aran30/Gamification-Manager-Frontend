@@ -70,24 +70,28 @@ export class BadgeElement extends LitElement {
       });
   }
 
-  _addLevel() {
-    var levelName = this.shadowRoot.querySelector("#addLevelNameInput").value;
-    if (levelName == "") {
-      console.log(this.levels)
+  _addBadge() {
+    var badgeName = this.shadowRoot.querySelector("#addBadgeNameInput").value;
+    if (badgeName == "") {
+      console.log(this.badges)
      return;
     }
-    var levelNumber = this.shadowRoot.querySelector(
-      "#addLevelNumberInput"
+    var badgeId = this.shadowRoot.querySelector(
+      "#addBadgeIdInput"
     ).value;
-    var levelPoints = this.shadowRoot.querySelector(
-      "#addLevelPointsInput"
+    var badgeDesc = this.shadowRoot.querySelector(
+      "#addBadgeDescInput"
     ).value;
-    console.log(levelName + levelNumber + levelPoints);
+    var badgeInput = this.shadowRoot.querySelector(
+      "#badgeImg"
+    );
+    console.log(badgeName + badgeId + badgeDesc);
     let formData = new FormData();
-    formData.append("levelnum", levelNumber);
-    formData.append("levelname", levelName);
-    formData.append("levelpointvalue", levelPoints);
-    fetch(this.url + "gamification/levels/" + this.game, {
+    formData.append("badgeid", badgeId);
+    formData.append("badgename", badgeName);
+    formData.append("badgedesc", badgeDesc);
+    formData.append("badgeimageinput", badgeInput.files[0]);
+    fetch(this.url + "gamification/badges/" + this.game, {
       method: "POST",
       headers: { Authorization: this.aaron },
       body: formData,
@@ -98,7 +102,7 @@ export class BadgeElement extends LitElement {
         }
       })
       .then((data) => {
-        this.getLevelData();
+        this.getBadgeData();
         /*      $("button#addnewgame").off('click');
         $("button#addnewgame").on('click', function(event) {
             $("#createnewgame").modal('toggle');
@@ -111,14 +115,16 @@ export class BadgeElement extends LitElement {
     console.log(badgeNumber)
     fetch(this.url + "gamification/badges/" + this.game + "/" + badgeNumber, {
       method: "Delete",
-      headers: { Authorization: this.aaron },
+      headers: { Authorization: this.aaron},
     })
       .then((response) => {
         console.log(response);
 
         if (response.ok) {
           console.log("good response for get games gamers");
+          console.log(this.badges)
           this.badges.pop(badge)
+          console.log(this.badges)
           this.requestUpdate()
           return response.json();
 
@@ -126,7 +132,7 @@ export class BadgeElement extends LitElement {
       })
       .then((data) => {
         console.log(data);
-        
+        this.requestUpdate()
       });
 
   }
@@ -170,9 +176,40 @@ returnImage(badge){
       )}
       <div class="mb-3">
    <label for="formFile" class="form-label">Default file input example</label>
-    <input class="form-control" type="file" id="formFile">
+    <input class="form-control" type="file" id="badgeImg">
     </div>
-
+    <div class="form-floating mb-3">
+    <input
+      id="addBadgeNameInput"
+      class="form-control"
+      placeholder="Badge Name"
+    />
+    <label for="floatingInput">Badge Name</label>
+  </div>
+  <div class="form-floating mb-3">
+    <input
+      id="addBadgeIdInput"
+      class="form-control"
+      placeholder="Badge Id"
+    />
+    <label for="floatingInput">Badge Id</label>
+  </div>
+  <div class="form-floating mb-3">
+    <input
+      id="addBadgeDescInput"
+      class="form-control"
+      placeholder="Badge Description"
+    />
+    <label for="floatingInput">Badge Description</label>
+    <button
+      type="button"
+      id="addBadgeButton"
+      @click="${() => this._addBadge()}"
+      class="btn btn-primary"
+    >
+      Add Badgel!
+    </button>
+  </div>
     `;
   }
 }
