@@ -163,7 +163,7 @@ returnImage(badge){
       <h2>Gamification Badge Manager</h2>
       ${this.badges.map(
         (badge) => html`
-          <div class="card border-dark mb-3" style="width: 18rem;">
+          <div class="card border-dark mb-3" style="width: 18rem;display:inline-block;">
           ${this.returnImage(badge)}
             <div class="card-body text-dark">
               <h5 class="card-title">${badge.name}</h5>

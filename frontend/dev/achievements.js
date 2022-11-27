@@ -159,7 +159,7 @@ export class AchievementElement extends LitElement {
 
       ${this.achievements.map(
       (achievement) => html`
-          <div class="card border-dark mb-3" style="width: 18rem;">
+          <div class="card border-dark mb-3" style="width: 18rem;display:inline-block;">
             <div class="card-body text-dark">
               <h5 class="card-title">${achievement.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${achievement.id}</h6>

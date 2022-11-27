@@ -2,6 +2,8 @@ import { LitElement, html } from "lit";
 import "./level.js";
 import "./badge.js";
 import "./achievements.js";
+import "./actions.js";
+import "./quests.js";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 // global variables
 var aaron, games, url, gameChosen, gameId, memberId, loginStatus, notification;
@@ -35,6 +37,7 @@ export class GameElement extends LitElement {
 
   firstUpdated(changedProperties) {
     console.log("iekrh");
+    this.shadowRoot.shouldRefreshWithAnchoring = false
     const statusBar = this.shadowRoot.querySelector("#statusBar");
     // in the following we use (event) => this.method(event) in order to be able to access
     // this.shadowRoot in the handleLogin and handleLogout methods
@@ -258,6 +261,8 @@ ${this.games.map(
 <level-element .aaron=${this.aaron} .game=${this.gameId}></level-element>
 <badge-element .aaron=${this.aaron} .game=${this.gameId}></badge-element>
 <achievement-element .aaron=${this.aaron} .game=${this.gameId}></achievement-element>
+<action-element .aaron=${this.aaron} .game=${this.gameId}></action-element>
+<quest-element .aaron=${this.aaron} .game=${this.gameId}></quest-element>
 </div>
        
       </div>

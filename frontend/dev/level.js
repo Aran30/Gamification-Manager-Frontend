@@ -31,9 +31,11 @@ export class LevelElement extends LitElement {
     this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
+
   }
 
   firstUpdated(changedProperties) {
+    this.shadowRoot.shouldRefreshWithAnchoring = false
     console.log("iekrh2");
     const button = this.shadowRoot.querySelector("#reloadButtonLevel");
     this.shadowRoot
@@ -156,7 +158,7 @@ export class LevelElement extends LitElement {
 
       ${this.levels.map(
         (level) => html`
-          <div class="card border-dark mb-3" style="width: 18rem;">
+          <div class="card border-dark mb-3" style="width: 18rem;display:inline-block;">
             <div class="card-body text-dark">
               <h5 class="card-title">${level.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${level.number}</h6>
