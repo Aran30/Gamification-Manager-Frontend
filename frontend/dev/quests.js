@@ -21,17 +21,21 @@ export class QuestElement extends LitElement {
       },
       actions: {
         type: Array,
-      }
+      },
+      chosenActions: {
+        type: Array,
+      },
     };
   }
   constructor() {
     super();
     this.aaron = "";
     this.quests = [];
-    this.actions = []
+    this.actions = [];
     this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
+    this.chosenActions = [];
   }
 
   firstUpdated(changedProperties) {
@@ -75,33 +79,45 @@ export class QuestElement extends LitElement {
   }
 
   _addQuest() {
-
     var questName = this.shadowRoot.querySelector("#addQuestNameInput").value;
-    var questId = this.shadowRoot.querySelector(
-      "#addQuestIdInput"
-    ).value;
-    var questDesc = this.shadowRoot.querySelector(
-      "#addQuestDescInput"
+    var questId = this.shadowRoot.querySelector("#addQuestIdInput").value;
+    var questDesc = this.shadowRoot.querySelector("#addQuestDescInput").value;
+    var questAchievementId = this.shadowRoot.querySelector(
+      "#addQuestAchievementInput"
     ).value;
     var questPoints = this.shadowRoot.querySelector(
       "#addQuestPointsInput"
     ).value;
-    var questTypeSelect = this.shadowRoot.querySelector(
-      "#questTypeSelect"
-    ).value;
     if (isNaN(questPoints)) {
-      questPoints = 0
+      questPoints = 0;
+    } else {
+      questPoints = parseInt(questPoints)
     }
+    var questActionIds = [];
+    this.chosenActions.forEach((actionId) => {
+      questActionIds.push({ times: 1, action: actionId });
+    });
+    var contentB = {
+      questpointvalue: questPoints,
+      questname: questName,
+      questachievementid: questAchievementId,
+      questid: questId,
+      questdescription: questDesc,
+      questquestflag: "False",
+      questpointflag:"False",
+      questactionids:questActionIds,
+      questquestidcompleted:"",
+      queststatus:"REVEALED",
+      questnotificationcheck:"False"
+    };
+
     let formData = new FormData();
-    formData.append("questpointvalue", questPoints);
-    formData.append("questname", questName);
-    formData.append("questtype", questTypeSelect);
-    formData.append("questid", questId);
-    formData.append("questdesc", questDesc);
+    formData.append("contentB", contentB);
+
     fetch(this.url + "gamification/quests/" + this.game, {
       method: "POST",
-      headers: { Authorization: this.aaron },
-      body: formData,
+      headers: { Authorization: this.aaron ,"Content-Type": "application/json"},
+      body: JSON.stringify(contentB),
     })
       .then((response) => {
         if (response.ok) {
@@ -134,10 +150,17 @@ export class QuestElement extends LitElement {
         }
       });
   }
-
+  _addAction(actionId) {
+    if (this.chosenActions.includes(actionId)) {
+      this.chosenActions.pop(actionId);
+    } else {
+      this.chosenActions.push(actionId);
+    }
+    console.log(this.chosenActions);
+  }
 
   _deleteQuest(quest) {
-    var questNumber = quest.id
+    var questNumber = quest.id;
     fetch(this.url + "gamification/quests/" + this.game + "/" + questNumber, {
       method: "Delete",
       headers: { Authorization: this.aaron },
@@ -154,11 +177,8 @@ export class QuestElement extends LitElement {
       })
       .then((data) => {
         console.log(data);
-
       });
-
   }
-
 
   render() {
     return html`
@@ -178,26 +198,43 @@ export class QuestElement extends LitElement {
       <h2>Gamification Quest Manager</h2>
 
       ${this.quests.map(
-      (quest) => html`
-          <div class="card border-dark mb-3" style="width: 18rem;display:inline-block;">
+        (quest) => html`
+          <div
+            class="card border-dark mb-3"
+            style="width: 18rem;display:inline-block;"
+          >
             <div class="card-body text-dark">
               <h5 class="card-title">${quest.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${quest.id}</h6>
               <p class="card-text">${quest.description}</p>
               <p class="card-text">Required Actions:</p>
               ${quest.actionIds.map(
-                (action) => html `
-                <p class="card-text"><small> ${action.actionId}: ${action.times} repetitions</small></p>
+                (action) => html`
+                  <p class="card-text">
+                    <small>
+                      ${action.actionId}: ${action.times} repetitions</small
+                    >
+                  </p>
                 `
               )}
-              <p class="card-text"> Rewarded points: ${quest.pointValue}</p>
-              <p class="card-text"> Unlocked Achievement: ${quest.achievementId}</p>
-              <p class="card-text"> Notification message: ${quest.notificationMessage}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${quest.number} @click="${() => this._deleteQuest(quest)}">Delete</a>
+              <p class="card-text">Rewarded points: ${quest.pointValue}</p>
+              <p class="card-text">
+                Unlocked Achievement: ${quest.achievementId}
+              </p>
+              <p class="card-text">
+                Notification message: ${quest.notificationMessage}
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary"
+                id="buttonLevel${quest.number}"
+                @click="${() => this._deleteQuest(quest)}"
+                >Delete</a
+              >
             </div>
           </div>
         `
-    )}
+      )}
       <div class="form-floating mb-3">
         <input
           id="addQuestNameInput"
@@ -214,53 +251,42 @@ export class QuestElement extends LitElement {
         />
         <label for="floatingInput">Quest Id</label>
       </div>
-      <select class="form-select form-select-lg mb-3" id="questTypeSelect" aria-label=".form-select-lg example">
-  <option selected>Actions to complete Quest </option>
-  <option value="1">LRS</option>
-  <option value="2">Other</option>
-</select>
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-  <label class="form-check-label" for="flexCheckDefault">
-    Default checkbox
-  </label>
-</div>
-     ${this.actions.map(
-      (action) => html`
-      <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-      <label class="form-check-label" for="flexCheckDefault">
-        ${action.id}
-      </label>
+      ${this.actions.map(
+        (action) => html`
+          <input
+            class="form-check-input"
+            type="checkbox"
+            @click="${() => this._addAction(action.id)}"
+            value=""
+            id="flexCheckDefault"
+          />
+          <label class="form-check-label" for="flexCheckDefault">
+            ${action.id}
+          </label>
         `
-    )}
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-  <label class="form-check-label" for="flexCheckChecked">
-    Checked checkbox
-  </label>
-</div>
+      )}
       <div class="form-floating mb-3">
-      <input
-        id="addQuestDescInput"
-        class="form-control"
-        placeholder="Quest Description"
-      />
-      <label for="floatingInput">Quest Description</label>
-    </div>
-    <div class="form-floating mb-3">
-    <input
-      id="addQuestAchievementInput"
-      class="form-control"
-      placeholder="Quest Achievement"
-    />
-    <label for="floatingInput">Quest AchievementId</label>
-  </div>
+        <input
+          id="addQuestDescInput"
+          class="form-control"
+          placeholder="Quest Description"
+        />
+        <label for="floatingInput">Quest Description</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input
+          id="addQuestAchievementInput"
+          class="form-control"
+          placeholder="Quest Achievement"
+        />
+        <label for="floatingInput">Quest AchievementId</label>
+      </div>
       <div class="form-floating mb-3">
         <input
           id="addQuestPointsInput"
           class="form-control"
           placeholder="Point Rewards"
-          type=number
+          type="number"
         />
         <label for="floatingInput">Point Rewards</label>
         <button
