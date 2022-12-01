@@ -18,7 +18,7 @@ export class ActionElement extends LitElement {
       },
       actions: {
         type: Array,
-      }
+      },
     };
   }
   constructor() {
@@ -70,22 +70,19 @@ export class ActionElement extends LitElement {
   }
 
   _addAction() {
-
     var actionName = this.shadowRoot.querySelector("#addActionNameInput").value;
-    var actionId = this.shadowRoot.querySelector(
-      "#addActionIdInput"
-    ).value;
-    var actionDesc = this.shadowRoot.querySelector(
-      "#addActionDescInput"
-    ).value;
+    var actionId = this.shadowRoot.querySelector("#addActionIdInput").value;
+    var actionDesc = this.shadowRoot.querySelector("#addActionDescInput").value;
     var actionPoints = this.shadowRoot.querySelector(
       "#addActionPointsInput"
     ).value;
-    var actionTypeSelect = this.shadowRoot.querySelector(
-      "#actionTypeSelect"
-    ).value;
+    var actionTypeSelect = "LRS";
+    if (this.shadowRoot.querySelector("#actionTypeSelect").value != 1){
+    actionTypeSelect = "other"
+    }
+      console.log(actionTypeSelect + "is the chosen type")
     if (isNaN(actionPoints)) {
-      actionPoints = 0
+      actionPoints = 0;
     }
     let formData = new FormData();
     formData.append("actionpointvalue", actionPoints);
@@ -109,7 +106,7 @@ export class ActionElement extends LitElement {
   }
 
   _deleteAction(action) {
-    var actionNumber = action.id
+    var actionNumber = action.id;
     fetch(this.url + "gamification/actions/" + this.game + "/" + actionNumber, {
       method: "Delete",
       headers: { Authorization: this.aaron },
@@ -126,11 +123,15 @@ export class ActionElement extends LitElement {
       })
       .then((data) => {
         console.log(data);
-
       });
-
   }
-
+  returnType(action) {
+    if (action.actionType == undefined || action.actionType == null) {
+      return html` <p class="card-text">Action Type: Other`;
+    } else {
+      return html` <p class="card-text">Action Type: ${action.actionType}</p>`;
+    }
+  }
 
   render() {
     return html`
@@ -150,19 +151,31 @@ export class ActionElement extends LitElement {
       <h2>Gamification Action Manager</h2>
 
       ${this.actions.map(
-      (action) => html`
-          <div class="card border-dark mb-3" style="width: 18rem;display:inline-block;">
+        (action) => html`
+          <div
+            class="card border-dark mb-3"
+            style="width: 18rem;display:inline-block;"
+          >
             <div class="card-body text-dark">
               <h5 class="card-title">${action.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${action.id}</h6>
               <p class="card-text">${action.description}</p>
-              <p class="card-text"> Rewarded points: ${action.pointValue}</p>
-              <p class="card-text"> Notification message: ${action.notificationMessage}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${action.number} @click="${() => this._deleteAction(action)}">Delete</a>
+              <p class="card-text">Rewarded points: ${action.pointValue}</p>
+              ${this.returnType(action)}
+              <p class="card-text">
+                Notification message: ${action.notificationMessage}
+              </p>
+              <a
+                href="#"
+                class="btn btn-primary"
+                id="buttonLevel${action.number}"
+                @click="${() => this._deleteAction(action)}"
+                >Delete</a
+              >
             </div>
           </div>
         `
-    )}
+      )}
       <div class="form-floating mb-3">
         <input
           id="addActionNameInput"
@@ -179,25 +192,29 @@ export class ActionElement extends LitElement {
         />
         <label for="floatingInput">Action Id</label>
       </div>
-      <select class="form-select form-select-lg mb-3" id="actionTypeSelect" aria-label=".form-select-lg example">
-  <option selected>Action Type Select (default LRS)</option>
-  <option value="1">LRS</option>
-  <option value="2">Other</option>
-</select>
+      <select
+        class="form-select form-select-lg mb-3"
+        id="actionTypeSelect"
+        aria-label=".form-select-lg example"
+      >
+        <option selected>Action Type Select (default LRS)</option>
+        <option value="1">LRS</option>
+        <option value="2">Other</option>
+      </select>
       <div class="form-floating mb-3">
-      <input
-        id="addActionDescInput"
-        class="form-control"
-        placeholder="Action Description"
-      />
-      <label for="floatingInput">Action Description</label>
-    </div>
+        <input
+          id="addActionDescInput"
+          class="form-control"
+          placeholder="Action Description"
+        />
+        <label for="floatingInput">Action Description</label>
+      </div>
       <div class="form-floating mb-3">
         <input
           id="addActionPointsInput"
           class="form-control"
           placeholder="Point Rewards"
-          type=number
+          type="number"
         />
         <label for="floatingInput">Point Rewards</label>
         <button

@@ -33,6 +33,7 @@ export class GameElement extends LitElement {
     if (this.games == null) {
       this.games = ["dd"];
     }
+    url = "http://127.0.0.1:8080/"
   }
 
   firstUpdated(changedProperties) {
@@ -48,7 +49,7 @@ export class GameElement extends LitElement {
     this.shadowRoot
       .querySelector("#addGameButton")
       .addEventListener("click", (event) => this._addGame());
-    url = "http://127.0.0.1:8080/";
+    this.url = "http://127.0.0.1:8080/";
     this.checkAndRegisterUserAgent();
 
   }
