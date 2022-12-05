@@ -80,6 +80,10 @@ export class ActionElement extends LitElement {
     if (this.shadowRoot.querySelector("#actionTypeSelect").value != 1){
     actionTypeSelect = "other"
     }
+    var actionLRSOccSelect = "Distinct";
+    if (this.shadowRoot.querySelector("#actionLRSOccSelect").value != 1){
+      actionLRSOccSelect = "All";
+    }
       console.log(actionTypeSelect + "is the chosen type")
     if (isNaN(actionPoints)) {
       actionPoints = 0;
@@ -90,6 +94,7 @@ export class ActionElement extends LitElement {
     formData.append("actiontype", actionTypeSelect);
     formData.append("actionid", actionId);
     formData.append("actiondesc", actionDesc);
+    formData.append("actionLRSOccurence", actionLRSOccSelect);
     fetch(this.url + "gamification/actions/" + this.game, {
       method: "POST",
       headers: { Authorization: this.aaron },
@@ -192,15 +197,6 @@ export class ActionElement extends LitElement {
         />
         <label for="floatingInput">Action Id</label>
       </div>
-      <select
-        class="form-select form-select-lg mb-3"
-        id="actionTypeSelect"
-        aria-label=".form-select-lg example"
-      >
-        <option selected>Action Type Select (default LRS)</option>
-        <option value="1">LRS</option>
-        <option value="2">Other</option>
-      </select>
       <div class="form-floating mb-3">
         <input
           id="addActionDescInput"
@@ -217,6 +213,25 @@ export class ActionElement extends LitElement {
           type="number"
         />
         <label for="floatingInput">Point Rewards</label>
+        </div>
+        <select
+        class="form-select form-select-lg mb-3"
+        id="actionTypeSelect"
+        aria-label=".form-select-lg example"
+      >
+        <option selected>Action Type Select (default LRS)</option>
+        <option value="1">LRS</option>
+        <option value="2">Other</option>
+      </select>
+      <select
+      class="form-select form-select-lg mb-3"
+      id="actionLRSOccSelect"
+      aria-label=".form-select-lg example"
+    >
+      <option value="1">Distinct Objects</option>
+      <option value="2">All Occurence</option>
+    </select>
+        <div>
         <button
           type="button"
           id="addActionButton"
@@ -225,7 +240,7 @@ export class ActionElement extends LitElement {
         >
           Add Action!
         </button>
-      </div>
+        </div>
     `;
   }
 }
