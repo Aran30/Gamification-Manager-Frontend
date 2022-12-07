@@ -65,11 +65,17 @@ export class LevelElement extends LitElement {
     var levelPoints = this.shadowRoot.querySelector(
       "#addLevelPointsInput"
     ).value;
+    var levelNotification = this.shadowRoot.querySelector(
+      "#addLevelNotificationInput"
+    ).value;
     console.log(levelName + levelNumber + levelPoints);
     let formData = new FormData();
     formData.append("levelnum", levelNumber);
     formData.append("levelname", levelName);
     formData.append("levelpointvalue", levelPoints);
+    formData.append("levelnotificationmessage", levelNotification);
+    formData.append("levelnotificationcheck",true);
+    console.log(formData)
     fetch(this.url + "gamification/levels/" + this.game, {
       method: "POST",
       headers: { Authorization: this.aaron },
@@ -163,6 +169,7 @@ export class LevelElement extends LitElement {
               <h5 class="card-title">${level.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${level.number}</h6>
               <p class="card-text">Required points: ${level.pointValue}</p>
+              <p class="card-text">Notification: ${level.notificationMessage}</p>
               <a href="#" class="btn btn-primary" id=buttonLevel${level.number} @click="${() => this._deleteLevel(level)}">Delete</a>
             </div>
           </div>
@@ -188,9 +195,19 @@ export class LevelElement extends LitElement {
         <input
           id="addLevelPointsInput"
           class="form-control"
-          placeholder="Level Points"
+          placeholder="Points required"
         />
-        <label for="floatingInput">Level Points</label>
+        
+        <label for="floatingInput">Points required</label>
+        </div>
+        <div class="form-floating mb-3">
+        <input
+          id="addLevelNotificationInput"
+          class="form-control"
+          placeholder="Notification"
+        />
+        
+        <label for="floatingInput">Notification</label>
         <button
           type="button"
           id="addLevelButton"

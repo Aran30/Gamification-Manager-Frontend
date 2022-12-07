@@ -88,6 +88,10 @@ export class ActionElement extends LitElement {
     if (isNaN(actionPoints)) {
       actionPoints = 0;
     }
+
+    var actionMatchAttribute = this.shadowRoot.querySelector("#addActionAttributeMatchInput").value;
+    var actionValueAttribute = this.shadowRoot.querySelector("#addActionValueMatchInput").value;
+    
     let formData = new FormData();
     formData.append("actionpointvalue", actionPoints);
     formData.append("actionname", actionName);
@@ -95,6 +99,8 @@ export class ActionElement extends LitElement {
     formData.append("actionid", actionId);
     formData.append("actiondesc", actionDesc);
     formData.append("actionLRSOccurence", actionLRSOccSelect);
+    formData.append("actionLRSAttribute", actionMatchAttribute);
+    formData.append("actionLRSAttributeValue",  actionValueAttribute);
     fetch(this.url + "gamification/actions/" + this.game, {
       method: "POST",
       headers: { Authorization: this.aaron },
@@ -185,9 +191,9 @@ export class ActionElement extends LitElement {
         <input
           id="addActionNameInput"
           class="form-control"
-          placeholder="Action Name"
+          placeholder="Action Name/Verb Name"
         />
-        <label for="floatingInput">Action Name</label>
+        <label for="floatingInput">Action Name/Verb Name</label>
       </div>
       <div class="form-floating mb-3">
         <input
@@ -231,6 +237,13 @@ export class ActionElement extends LitElement {
       <option value="1">Distinct Objects</option>
       <option value="2">All Occurence</option>
     </select>
+    <div class="input-group">
+    <input id=addActionAttributeMatchInput type="text" class="form-control" placeholder="Matching Attribute"/>
+    <span class="input-group-addon">-</span>
+    <input id=addActionValueMatchInput type="text" class="form-control" placeholder="Value to match"/>
+</div>
+
+
         <div>
         <button
           type="button"
