@@ -91,6 +91,8 @@ export class BadgeElement extends LitElement {
     formData.append("badgename", badgeName);
     formData.append("badgedesc", badgeDesc);
     formData.append("badgeimageinput", badgeInput.files[0]);
+    formData.append("badgenotificationcheck", "true");
+    formData.append("badgenotificationmessage", "");
     fetch(this.url + "gamification/badges/" + this.game, {
       method: "POST",
       headers: { Authorization: this.aaron },

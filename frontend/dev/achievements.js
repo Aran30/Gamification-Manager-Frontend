@@ -91,12 +91,18 @@ export class AchievementElement extends LitElement {
     var achievementBadgeId = this.shadowRoot.querySelector(
       "#addAchievementBadgeInput"
     ).value;
+    var achievementNotification = this.shadowRoot.querySelector(
+      "#addAchievementNotificationInput"
+    ).value;
     let formData = new FormData();
     formData.append("achievementpointvalue", achievementPoints);
     formData.append("achievementname", achievementName);
     formData.append("achievementid", achievementId);
     formData.append("achievementdesc", achievementDesc);
     formData.append("achievementbadgeid", achievementBadgeId);
+    formData.append("achievementnotificationmessage", achievementNotification);
+    formData.append("achievementnotificationcheck", "true");
+    console.log(formData)
     fetch(this.url + "gamification/achievements/" + this.game, {
       method: "POST",
       headers: { Authorization: this.aaron },
