@@ -127,7 +127,10 @@ export class ActionElement extends LitElement {
 
         if (response.ok) {
           console.log("good response for get games gamers");
-          this.actions.pop(action);
+          const index = this.actions.indexOf(action);
+          if (index > -1) { // only splice array when item is found
+            this.actions.splice(index, 1); // 2nd parameter means remove one item only
+          }
           this.requestUpdate();
           return response.json();
         }

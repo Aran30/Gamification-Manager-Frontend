@@ -112,41 +112,43 @@ export class BadgeElement extends LitElement {
       });
   }
 
-  _deleteBadge(badge){
+  _deleteBadge(badge) {
     var badgeNumber = badge.id
     console.log(badgeNumber)
     fetch(this.url + "gamification/badges/" + this.game + "/" + badgeNumber, {
       method: "Delete",
-      headers: { Authorization: this.aaron},
+      headers: { Authorization: this.aaron },
     })
       .then((response) => {
         console.log(response);
 
         if (response.ok) {
-          console.log("good response for get games gamers");
+          console.log("good response for get badges gamers");
           console.log(this.badges)
-          this.badges.pop(badge)
-          console.log(this.badges)
-          this.requestUpdate()
-          return response.json();
+          const index = this.badges.indexOf(badge);
+          if (index > -1) { // only splice array when item is found
+            this.badges.splice(index, 1); // 2nd parameter means remove one item only
+          }
 
+          this.requestUpdate();
+          return response.json();
         }
       })
       .then((data) => {
-        console.log(data);
-        this.requestUpdate()
+        console.log(this.badges);
+
       });
 
   }
   // i need to change the level service code, its just thrash atm
- 
-returnImage(badge){
-  if(badge.base64==""){
-    return html``;
-  } else {
-    return html`<img class="card-img-top" src="data:image/png;base64, ${badge.base64}" />`
+
+  returnImage(badge) {
+    if (badge.base64 == "") {
+      return html``;
+    } else {
+      return html`<img class="card-img-top" src="data:image/png;base64, ${badge.base64}" />`
+    }
   }
-}
 
   render() {
     return html`
@@ -164,7 +166,7 @@ returnImage(badge){
       ></script>
       <h2>Gamification Badge Manager</h2>
       ${this.badges.map(
-        (badge) => html`
+      (badge) => html`
           <div class="card border-dark mb-3" style="width: 18rem;display:inline-block;">
           ${this.returnImage(badge)}
             <div class="card-body text-dark">
@@ -175,7 +177,7 @@ returnImage(badge){
             </div>
           </div>
         `
-      )}
+    )}
       <div class="mb-3">
    <label for="formFile" class="form-label">Default file input example</label>
     <input class="form-control" type="file" id="badgeImg">

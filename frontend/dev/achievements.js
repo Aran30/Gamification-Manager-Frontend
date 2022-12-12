@@ -133,7 +133,10 @@ export class AchievementElement extends LitElement {
 
         if (response.ok) {
           console.log("good response for get games gamers");
-          this.achievements.pop(achievement);
+          const index = this.achievements.indexOf(achievement);
+          if (index > -1) { // only splice array when item is found
+            this.achievements.splice(index, 1); // 2nd parameter means remove one item only
+          }
           this.requestUpdate();
           return response.json();
         }

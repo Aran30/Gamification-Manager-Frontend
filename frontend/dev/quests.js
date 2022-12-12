@@ -170,7 +170,10 @@ export class QuestElement extends LitElement {
 
         if (response.ok) {
           console.log("good response for get games gamers");
-          this.quests.pop(quest);
+          const index = this.quests.indexOf(quest);
+          if (index > -1) { // only splice array when item is found
+            this.quests.splice(index, 1); // 2nd parameter means remove one item only
+          }
           this.requestUpdate();
           return response.json();
         }

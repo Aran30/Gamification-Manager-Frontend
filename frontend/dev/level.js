@@ -129,9 +129,12 @@ export class LevelElement extends LitElement {
 
         if (response.ok || JSON.stringify(response).toLocaleLowerCase().includes("delete file failed")) {
           console.log("good response for get games gamers");
-          this.levels.pop(level)
+          
+          const index = this.levels.indexOf(level);
+          if (index > -1) { // only splice array when item is found
+            this.levels.splice(index, 1); // 2nd parameter means remove one item only
+          }
           this.requestUpdate()
-          console.log(this.levels)
           return response.json();
 
         }
