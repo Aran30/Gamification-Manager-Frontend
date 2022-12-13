@@ -63,8 +63,6 @@ export class ActionElement extends LitElement {
         console.log(data);
         if (data != undefined) {
           this.actions = data.rows;
-          console.log("done");
-          console.log(this.actions);
         }
       });
   }

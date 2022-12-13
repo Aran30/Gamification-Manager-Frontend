@@ -31,11 +31,12 @@ export class BadgeElement extends LitElement {
   }
 
   firstUpdated(changedProperties) {
-    console.log("iekrh2");
-  /*  const button = this.shadowRoot.querySelector("#reloadButtonLevel");
-    this.shadowRoot
-      .querySelector("#addLevelButton")
-      .addEventListener("click", (event) => this._addLevel());*/
+
+    console.log("iekrh2badge");
+    /*  const button = this.shadowRoot.querySelector("#reloadButtonLevel");
+      this.shadowRoot
+        .querySelector("#addLevelButton")
+        .addEventListener("click", (event) => this._addLevel());*/
     this.url = "http://127.0.0.1:8080/";
   }
 
@@ -74,7 +75,7 @@ export class BadgeElement extends LitElement {
     var badgeName = this.shadowRoot.querySelector("#addBadgeNameInput").value;
     if (badgeName == "") {
       console.log(this.badges)
-     return;
+      return;
     }
     var badgeId = this.shadowRoot.querySelector(
       "#addBadgeIdInput"
@@ -125,12 +126,17 @@ export class BadgeElement extends LitElement {
         if (response.ok) {
           console.log("good response for get badges gamers");
           console.log(this.badges)
+          console.log(window.scrollY)
+          var y = window.scrollY
           const index = this.badges.indexOf(badge);
           if (index > -1) { // only splice array when item is found
             this.badges.splice(index, 1); // 2nd parameter means remove one item only
           }
 
           this.requestUpdate();
+          console.log(window.scrollY)
+          window.scroll(0,y)
+          console.log(window.scrollY)
           return response.json();
         }
       })

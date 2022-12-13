@@ -95,7 +95,11 @@ export class QuestElement extends LitElement {
     }
     var questActionIds = [];
     this.chosenActions.forEach((actionId) => {
-      questActionIds.push({ times: 1, action: actionId });
+      console.log(this.shadowRoot.querySelector("#times" + actionId).value)
+      if(this.shadowRoot.querySelector("#times" + actionId).value > 0){
+        questActionIds.push({ times: parseInt(this.shadowRoot.querySelector("#times" + actionId).value), action: actionId });
+      } else {questActionIds.push({ times: 1, action: actionId });}
+      
     });
     var contentB = {
       questpointvalue: questPoints,
@@ -170,11 +174,13 @@ export class QuestElement extends LitElement {
 
         if (response.ok) {
           console.log("good response for get games gamers");
+          var y = window.scrollY
           const index = this.quests.indexOf(quest);
           if (index > -1) { // only splice array when item is found
             this.quests.splice(index, 1); // 2nd parameter means remove one item only
           }
           this.requestUpdate();
+          window.scroll(0,y)
           return response.json();
         }
       })
@@ -266,6 +272,8 @@ export class QuestElement extends LitElement {
           <label class="form-check-label" for="flexCheckDefault">
             ${action.id}
           </label>
+          <label for="fname">Times:</label>
+  <input type="text" id="times${action.id}" name="fname"><br><br>
         `
       )}
       <div class="form-floating mb-3">
