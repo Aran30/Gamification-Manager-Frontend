@@ -4,6 +4,7 @@ import "./badge.js";
 import "./achievements.js";
 import "./actions.js";
 import "./quests.js";
+import "./streaks.js";
 import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 // global variables
 var aaron, games, url, gameChosen, gameId, memberId, loginStatus, notification;
@@ -265,6 +266,7 @@ ${this.games.map(
 <achievement-element .aaron=${this.aaron} .game=${this.gameId}></achievement-element>
 <action-element .aaron=${this.aaron} .game=${this.gameId}></action-element>
 <quest-element .aaron=${this.aaron} .game=${this.gameId}></quest-element>
+<streak-element .aaron=${this.aaron} .game=${this.gameId}></streak-element>
 </div>
        
       </div>
