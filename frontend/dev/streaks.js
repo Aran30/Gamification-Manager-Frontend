@@ -39,7 +39,6 @@ export class StreakElement extends LitElement {
     this.streaks = [];
     this.actions = [];
     this.achievements = [];
-    this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
     this.chosenActions = [];
@@ -52,7 +51,6 @@ export class StreakElement extends LitElement {
        this.shadowRoot
          .querySelector("#addLevelButton")
          .addEventListener("click", (event) => this._addLevel());*/
-    this.url = "http://127.0.0.1:8080/";
   }
 
   updated() {

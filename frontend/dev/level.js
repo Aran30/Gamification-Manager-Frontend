@@ -28,7 +28,6 @@ export class LevelElement extends LitElement {
     super();
     this.aaron = "";
     this.levels = [];
-    this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
 
@@ -41,7 +40,6 @@ export class LevelElement extends LitElement {
     this.shadowRoot
       .querySelector("#addLevelButton")
       .addEventListener("click", (event) => this._addLevel());
-    this.url = "http://127.0.0.1:8080/";
   }
 
   updated() {

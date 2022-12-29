@@ -25,7 +25,6 @@ export class ActionElement extends LitElement {
     super();
     this.aaron = "";
     this.actions = [];
-    this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
   }
@@ -36,7 +35,6 @@ export class ActionElement extends LitElement {
        this.shadowRoot
          .querySelector("#addLevelButton")
          .addEventListener("click", (event) => this._addLevel());*/
-    this.url = "http://127.0.0.1:8080/";
   }
 
   updated() {

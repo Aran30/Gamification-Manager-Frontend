@@ -32,7 +32,6 @@ export class QuestElement extends LitElement {
     this.aaron = "";
     this.quests = [];
     this.actions = [];
-    this.url = "http://127.0.0.1:8080/";
     this.oldGame = undefined;
     this.game = undefined;
     this.chosenActions = [];
@@ -44,7 +43,6 @@ export class QuestElement extends LitElement {
        this.shadowRoot
          .querySelector("#addLevelButton")
          .addEventListener("click", (event) => this._addLevel());*/
-    this.url = "http://127.0.0.1:8080/";
   }
 
   updated() {
@@ -85,9 +83,7 @@ export class QuestElement extends LitElement {
     var questAchievementId = this.shadowRoot.querySelector(
       "#addQuestAchievementInput"
     ).value;
-    var questPoints = this.shadowRoot.querySelector(
-      "#addQuestPointsInput"
-    ).value;
+    var questPoints = 0
     if (isNaN(questPoints)) {
       questPoints = 0;
     } else {
@@ -293,13 +289,6 @@ export class QuestElement extends LitElement {
         <label for="floatingInput">Quest AchievementId</label>
       </div>
       <div class="form-floating mb-3">
-        <input
-          id="addQuestPointsInput"
-          class="form-control"
-          placeholder="Point Rewards"
-          type="number"
-        />
-        <label for="floatingInput">Point Rewards</label>
         <button
           type="button"
           id="addQuestButton"
