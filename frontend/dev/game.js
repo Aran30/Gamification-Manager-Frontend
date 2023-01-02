@@ -296,7 +296,7 @@ export class GameElement extends LitElement {
         if (response.ok) {
           console.log("good response for get games gamers");
           return response.json();
-        }
+        }return response.json();
       })
       .then((data) => {
         console.log(data);
@@ -318,7 +318,7 @@ export class GameElement extends LitElement {
         if (response.ok) {
           console.log("deleted game")
           return response.json();
-        }
+        } 
       })
       .then((data) => {
         console.log(data);
@@ -340,7 +340,7 @@ export class GameElement extends LitElement {
         if (response.ok) {
           console.log("good response for get games gamers");
           return response.json();
-        }
+        } return response.json();
       })
       .then((data) => {
         console.log(data);
@@ -570,12 +570,14 @@ export class GameElement extends LitElement {
 
   addActionsFromFile(gameJSON) {
     if (gameJSON["actions"] == undefined || gameJSON["actions"][0] == undefined) {
+      console.log("done adding actions")
       this.addBadgesFromFile(gameJSON)
     } else {
+      console.log("Adding Actions")
       var action = gameJSON["actions"][0]
       var actionName = action["name"]
       var actionId = action["id"]
-      var actionDesc = action["descrpition"]
+      var actionDesc = action["description"]
       var actionPoints = action["pointValue"]
       var actionTypeSelect = action["actionType"]
       var actionLRSOccSelect = action["lrsOccString"]
@@ -613,12 +615,23 @@ export class GameElement extends LitElement {
   }
 
   addLevelsFromFile(gameJSON) {
+    console.log("Adding Levels")
     if (gameJSON["levels"] == undefined || gameJSON["levels"][0] == undefined) {
+      console.log("Done adding levels, now proceeding to actions")
       this.addActionsFromFile(gameJSON)
     } else {
       var level = gameJSON["levels"][0]
       var levelName = level["name"];
       var levelNumber = level["number"]
+      if(levelNumber == 0){
+        console.log("0 level, skipping...")
+        const index = gameJSON["levels"].indexOf(level);
+        if (index > -1) { // only splice array when item is found
+          gameJSON["levels"].splice(index, 1); // 2nd parameter means remove one item only
+          this.addLevelsFromFile(gameJSON)
+
+        }
+      }
       var levelPoints = level["pointValue"]
       var levelNotification = level["notificationMessage"]
       let formData = new FormData();
@@ -633,11 +646,10 @@ export class GameElement extends LitElement {
         body: formData,
       })
         .then((response) => {
-          if (response.ok) {
-            return response.json();
-          }
+          return response.json();
         })
         .then((data) => {
+          console.log("added level")
           const index = gameJSON["levels"].indexOf(level);
           if (index > -1) { // only splice array when item is found
             gameJSON["levels"].splice(index, 1); // 2nd parameter means remove one item only
@@ -652,6 +664,7 @@ export class GameElement extends LitElement {
     var gameName = Object.keys(gameJSON)[0];
     let formData = new FormData();
     formData.append("gameid", gameName);
+    console.log("started adding game")
     fetch(this.url + "gamification/games/data", {
       method: "POST",
       headers: { Authorization: this.aaron },

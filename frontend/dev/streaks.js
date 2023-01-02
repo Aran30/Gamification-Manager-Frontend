@@ -130,7 +130,7 @@ export class StreakElement extends LitElement {
       name: streakName,
       streakLevel:maxLevel,
       status:status,
-      pointThreshold:pointThreshold,
+      pointThreshold:0,
       period:period,
       actions:streakActionIds,
       badges:badges,
@@ -180,7 +180,10 @@ export class StreakElement extends LitElement {
   }
   _addAction(actionId) {
     if (this.chosenActions.includes(actionId)) {
-      this.chosenActions.pop(actionId);
+      const index = this.chosenActions.indexOf(actionId);
+      if (index > -1) { // only splice array when item is found
+        this.chosenActions.splice(index, 1); // 2nd parameter means remove one item only
+      }
     } else {
       this.chosenActions.push(actionId);
     }

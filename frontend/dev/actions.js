@@ -139,7 +139,8 @@ export class ActionElement extends LitElement {
     if (action.actionType == undefined || action.actionType == null) {
       return html` <p class="card-text">Action Type: Other`;
     } else {
-      return html` <p class="card-text">Action Type: ${action.actionType}</p>`;
+      return html` <p class="card-text">Action Type: ${action.actionType}</p>
+      <p class="card-text">Attribute to match + value: ${action.lrsAttribute} - ${action.lrsAttributeValue}</p>`;
     }
   }
 

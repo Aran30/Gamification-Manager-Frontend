@@ -152,7 +152,10 @@ export class QuestElement extends LitElement {
   }
   _addAction(actionId) {
     if (this.chosenActions.includes(actionId)) {
-      this.chosenActions.pop(actionId);
+      const index = this.chosenActions.indexOf(actionId);
+      if (index > -1) { // only splice array when item is found
+        this.chosenActions.splice(index, 1); // 2nd parameter means remove one item only
+      }
     } else {
       this.chosenActions.push(actionId);
     }
