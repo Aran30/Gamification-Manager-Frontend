@@ -478,6 +478,10 @@ export class GameElement extends LitElement {
       var achievementNot = achievement["notificationMessage"]
       var achievementPoints = achievement["pointValue"]
       var achievementBadgeId = achievement["badgeId"]
+      if(achievementBadgeId == null || achievementBadgeId == undefined)
+      {
+        achievementBadgeId = ""
+      }
       var achievementNotification = achievement["notificationMessage"]
       let formData = new FormData();
       formData.append("achievementpointvalue", achievementPoints);

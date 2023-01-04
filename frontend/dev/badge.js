@@ -110,6 +110,57 @@ export class BadgeElement extends LitElement {
         });*/
       });
   }
+  _updateBadge(badge) {
+    var badgeNumber = badge.id
+    var badgeName = this.shadowRoot.querySelector("#addBadgeNameInput").value;
+    let formData = new FormData();
+    if (badgeName != "") {
+      formData.append("badgename", badgeName);
+    }
+    var badgeId = this.shadowRoot.querySelector(
+      "#addBadgeIdInput"
+    ).value;
+    if(badgeId!=""){
+      formData.append("badgeid", badgeId);
+    }
+    var badgeDesc = this.shadowRoot.querySelector(
+      "#addBadgeDescInput"
+    ).value;
+    if(badgeDesc!=""){
+      formData.append("badgedesc", badgeDesc);
+    }
+    var badgeInput = this.shadowRoot.querySelector(
+      "#badgeImg"
+    );
+    if(badgeInput!=""){
+      formData.append("badgeimageinput", badgeInput.files[0]);
+    }
+
+
+   
+    
+   
+   
+    formData.append("badgenotificationcheck", "true");
+    formData.append("badgenotificationmessage", "");
+    fetch(this.url + "gamification/badges/" + this.game + "/" + badgeNumber, {
+      method: "PUT",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getBadgeData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
 
   _deleteBadge(badge) {
     var badgeNumber = badge.id
@@ -178,6 +229,7 @@ export class BadgeElement extends LitElement {
               <h6 class="card-subtitle mb-2 text-muted">${badge.id}</h6>
               <p class="card-text">Required points: ${badge.description}</p>
               <a href="#" class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._deleteBadge(badge)}">Delete</a>
+              <a href="#" class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._updateBadge(badge)}">Update</a>
             </div>
           </div>
         `
