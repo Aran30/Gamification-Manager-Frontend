@@ -111,7 +111,48 @@ export class ActionElement extends LitElement {
         this.getActionsData();
       });
   }
+  // need to update backend to also change the new attributes
+  _updateAction(action) {
+    var actionNumber = action.id
+    var actionName = this.shadowRoot.querySelector("#addActionNameInput").value;
+    let formData = new FormData();
+    if (actionName != "") {
+      formData.append("actionname", actionName);
+    }
+    
+    var actionDesc = this.shadowRoot.querySelector(
+      "#addActionDescInput"
+    ).value;
+    if(actionDesc!=""){
+      formData.append("actiondesc", actionDesc);
+    }
+    var actionPoints = this.shadowRoot.querySelector(
+      "#addActionPointsInput"
+    ).value;
+    if(actionPoints!=""){
+      formData.append("actionpointvalue", actionPoints);
+    }
 
+    formData.append("actionnotificationcheck", "true");
+    formData.append("actionnotificationmessage", "");
+    fetch(this.url + "gamification/actions/" + this.game + "/" + actionNumber, {
+      method: "PUT",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getActionsData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
   _deleteAction(action) {
     var actionNumber = action.id;
     fetch(this.url + "gamification/actions/" + this.game + "/" + actionNumber, {
@@ -183,6 +224,7 @@ export class ActionElement extends LitElement {
                 @click="${() => this._deleteAction(action)}"
                 >Delete</a
               >
+              <a href="#" class="btn btn-primary" id=buttonLevel${action.id} @click="${() => this._updateAction(action)}">Update</a>
             </div>
           </div>
         `

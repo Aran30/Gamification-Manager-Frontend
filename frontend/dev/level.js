@@ -92,6 +92,50 @@ export class LevelElement extends LitElement {
         });*/
       });
   }
+
+  _updateLevel(level) {
+    var levelNumber = level.number
+    var levelName = this.shadowRoot.querySelector("#addLevelNameInput").value;
+    let formData = new FormData();
+    if (levelName != "") {
+      formData.append("levelname", levelName);
+    }
+    
+  
+    var levelPoints = this.shadowRoot.querySelector(
+      "#addLevelPointsInput"
+    ).value;
+    if(levelPoints!=""){
+      formData.append("levelpointvalue", levelPoints);
+    } else {
+      formData.append("levelpointvalue", level.pointValue);
+    }
+    var levelNotification = this.shadowRoot.querySelector(
+      "#addLevelNotificationInput"
+    ).value;
+    if(levelNotification!=""){
+      formData.append("levelnotificationmessage", levelNotification);
+    }
+
+    fetch(this.url + "gamification/levels/" + this.game + "/" + levelNumber, {
+      method: "PUT",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getLevelData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
+
   // i need to change the level service code, its just thrash atm
   getLevelData() {
     fetch(this.url + "gamification/levels/" + this.game, {
@@ -172,6 +216,7 @@ export class LevelElement extends LitElement {
               <p class="card-text">Required points: ${level.pointValue}</p>
               <p class="card-text">Notification: ${level.notificationMessage}</p>
               <a href="#" class="btn btn-primary" id=buttonLevel${level.number} @click="${() => this._deleteLevel(level)}">Delete</a>
+              <a href="#" class="btn btn-primary" id=buttonLevel${level.id} @click="${() => this._updateLevel(level)}">Update</a>
             </div>
           </div>
         `

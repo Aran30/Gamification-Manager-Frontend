@@ -120,6 +120,61 @@ export class AchievementElement extends LitElement {
       });
   }
 
+   // need to update backend to also change the new attributes
+   _updateAchievement(achievement) {
+    var achievementNumber = achievement.id
+    var achievementName = this.shadowRoot.querySelector("#addAchievementNameInput").value;
+    let formData = new FormData();
+    if (achievementName != "") {
+      formData.append("achievementname", achievementName);
+    }
+    
+    var achievementDesc = this.shadowRoot.querySelector(
+      "#addAchievementDescInput"
+    ).value;
+    if(achievementDesc!=""){
+      formData.append("achievementdesc", achievementDesc);
+    }
+    var achievementPoints = this.shadowRoot.querySelector(
+      "#addAchievementPointsInput"
+    ).value;
+    if(achievementPoints!=""){
+      formData.append("achievementpointvalue", achievementPoints);
+    }
+    var achievementNotification = this.shadowRoot.querySelector(
+      "#addAchievementNotificationInput"
+    ).value;
+    if(achievementNotification !=""){
+      formData.append("achievementnotificationmessage", achievementNotification);
+    }
+
+    var achievementBadge = this.shadowRoot.querySelector(
+      "#addAchievementBadgeInput"
+    ).value;
+    if(achievementBadge !=""){
+      formData.append("achievementbadgeid", achievementBadge);
+    }
+
+    formData.append("achievementnotificationcheck", "true");
+    fetch(this.url + "gamification/achievements/" + this.game + "/" + achievementNumber, {
+      method: "PUT",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getAchievementData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
+
   _deleteAchievement(achievement) {
     var achievementNumber = achievement.id
     fetch(this.url + "gamification/achievements/" + this.game + "/" + achievementNumber, {
@@ -175,6 +230,7 @@ export class AchievementElement extends LitElement {
               <p class="card-text"> Rewarded badge: ${achievement.badgeId}</p>
               <p class="card-text"> Notification message: ${achievement.notificationMessage}</p>
               <a href="#" class="btn btn-primary" id=buttonLevel${achievement.number} @click="${() => this._deleteAchievement(achievement)}">Delete</a>
+              <a href="#" class="btn btn-primary" id=buttonLevel${achievement.id} @click="${() => this._updateAchievement(achievement)}">Update</a>
             </div>
           </div>
         `
