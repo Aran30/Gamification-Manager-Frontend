@@ -99,6 +99,8 @@ export class LevelElement extends LitElement {
     let formData = new FormData();
     if (levelName != "") {
       formData.append("levelname", levelName);
+    } else {
+      formData.append("levelname", level.name);
     }
     
   
@@ -115,6 +117,8 @@ export class LevelElement extends LitElement {
     ).value;
     if(levelNotification!=""){
       formData.append("levelnotificationmessage", levelNotification);
+    } else {
+      formData.append("levelnotificationmessage", level.notificationMessage);
     }
 
     fetch(this.url + "gamification/levels/" + this.game + "/" + levelNumber, {
