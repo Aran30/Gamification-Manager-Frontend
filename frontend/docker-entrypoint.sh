@@ -9,5 +9,5 @@ NODE_ID_SEED=${NODE_ID_SEED:-$RANDOM}
 GF_URL=$GF_URL
 OLD_URL="http://127.0.0.1:8080/"
 echo ${GF_URL}
-sed -i "s=${OLD_URL}=$GF_URL=g" dev/game.js 
+sed "s=${OLD_URL}=$GF_URL=g" dev/game.js > /tmp/game.js && cat /tmp/game.js > dev/game.js
 exec npm run serve -- --port 8070
