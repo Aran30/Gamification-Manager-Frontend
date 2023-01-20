@@ -1,11 +1,11 @@
-import { LitElement, html } from "lit";
+import { LitElement, html } from "../node_modules/lit";
 import "./level.js";
 import "./badge.js";
 import "./achievements.js";
 import "./actions.js";
 import "./quests.js";
 import "./streaks.js";
-import "las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
+import "../node_modules/las2peer-frontend-statusbar/las2peer-frontend-statusbar.js";
 // global variables
 var aaron, games, url, gameChosen, gameId, memberId, loginStatus, notification, achievements, actions, badges, levels, quests, streaks;
 
@@ -718,7 +718,7 @@ export class GameElement extends LitElement {
     <las2peer-frontend-statusbar
     id="statusBar"
     service="Gamification Frontend"
-    oidcclientid=bdda7396-3f6d-4d83-ac21-65b4069d0eab
+    oidcclientid=aaronma
     suppresswidgeterror="true"
     autoAppendWidget=true
     loginoidcprovider="https://auth.las2peer.org/auth/realms/main"
