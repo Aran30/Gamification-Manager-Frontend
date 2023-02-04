@@ -161,7 +161,74 @@ export class QuestElement extends LitElement {
     }
     console.log(this.chosenActions);
   }
+  moveUp(quest) {
+    var questNumber = quest.id
+    let formData = new FormData();
+    var index = this.quests.indexOf(quest);
+    var succeedingQuests = [];
+    for(var i=index-1; i<this.quests.length;i++){
+      if(i==index){
+        continue;
+      }
+      succeedingQuests.push(this.quests[i].id);
 
+    }
+
+    formData.append("questIds", succeedingQuests);
+    fetch(this.url + "gamification/quests/" + this.game + "/" + questNumber+"/up", {
+      method: "PUT",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        console.log(response)
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getQuestsData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
+
+  moveDown(quest) {
+    var questNumber = quest.id
+    let formData = new FormData();
+    var index = this.quests.indexOf(quest);
+    var succeedingQuests = [];
+    for(var i=index; i<this.quests.length;i++){
+      if(i==index+1){
+        questNumber = this.quests[i].id
+        continue;
+      }
+      succeedingQuests.push(this.quests[i].id);
+
+    }
+
+    formData.append("questIds", succeedingQuests);
+    fetch(this.url + "gamification/quests/" + this.game + "/" + questNumber+"/up", {
+      method: "PUT",
+      headers: { Authorization: this.aaron },
+      body: formData,
+    })
+      .then((response) => {
+        console.log(response)
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.getQuestsData();
+        /*      $("button#addnewgame").off('click');
+        $("button#addnewgame").on('click', function(event) {
+            $("#createnewgame").modal('toggle');
+        });*/
+      });
+  }
   _deleteQuest(quest) {
     var questNumber = quest.id;
     fetch(this.url + "gamification/quests/" + this.game + "/" + questNumber, {
@@ -238,7 +305,10 @@ export class QuestElement extends LitElement {
                 id="buttonLevel${quest.number}"
                 @click="${() => this._deleteQuest(quest)}"
                 >Delete</a
-              >
+                
+              >    <a href="#" class="btn btn-primary"  @click="${() => this.moveUp(quest)}">UP</a>
+              <a href="#" class="btn btn-primary"  @click="${() => this.moveDown(quest)}">DOWN</a>
+           
             </div>
           </div>
         `
