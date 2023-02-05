@@ -97,17 +97,27 @@ export class QuestElement extends LitElement {
       } else {questActionIds.push({ times: 1, action: actionId });}
       
     });
+    
+    var status = "REVEALED";
+    var questquestflag = "False"
+    var questIds = this.shadowRoot.querySelector("#questSelect").options[this.shadowRoot.querySelector("#questSelect").selectedIndex].text
+    console.log(questIds)
+    if(questIds!="NONE" || questIds!= null || questIds!= ""){
+      status = "HIDDEN"
+      questquestflag = "True"
+    }
     var contentB = {
       questpointvalue: questPoints,
       questname: questName,
       questachievementid: questAchievementId,
       questid: questId,
       questdescription: questDesc,
-      questquestflag: "False",
+      questquestflag: questquestflag,
       questpointflag:"False",
       questactionids:questActionIds,
-      questquestidcompleted:"",
-      queststatus:"REVEALED",
+      questquestidcompleted:questIds,
+      questidcompleted:questIds,
+      queststatus:status,
       questnotificationcheck:"False"
     };
 
@@ -361,6 +371,21 @@ export class QuestElement extends LitElement {
         />
         <label for="floatingInput">Quest AchievementId</label>
       </div>
+      <select id=questSelect class="form-select" aria-label="Default select example">
+      <option selected>Choose Required Quest to Unlock</option>
+      <option value="NONE">NONE</option>
+      <label class="form-check-label" for="flexCheckDefault">
+        NONE
+      </label>
+      ${this.quests.map(
+        (quest) => html`
+        <option value="${quest.id}">${quest.id}</option>
+          <label class="form-check-label" for="flexCheckDefault">
+            ${quest.id}
+          </label>
+        `
+      )}
+    </select>
       <div class="form-floating mb-3">
         <button
           type="button"
