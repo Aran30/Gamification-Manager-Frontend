@@ -102,9 +102,13 @@ export class QuestElement extends LitElement {
     var questquestflag = "False"
     var questIds = this.shadowRoot.querySelector("#questSelect").options[this.shadowRoot.querySelector("#questSelect").selectedIndex].text
     console.log(questIds)
-    if(questIds!="NONE" || questIds!= null || questIds!= ""){
+    if(questIds!="NONE" && questIds!= null && questIds!= ""){
       status = "HIDDEN"
       questquestflag = "True"
+      console.log("requirement set");
+      
+    } else {
+      questIds=null
     }
     var contentB = {
       questpointvalue: questPoints,
