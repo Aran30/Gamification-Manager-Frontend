@@ -19,12 +19,19 @@ export class QuestElement extends LitElement {
       quests: {
         type: Array,
       },
+      achievements: {
+        type: Array,
+      },
       actions: {
         type: Array,
       },
       chosenActions: {
         type: Array,
       },
+      getQuestsData:{
+        type:Array
+      }
+
     };
   }
   constructor() {
@@ -32,6 +39,7 @@ export class QuestElement extends LitElement {
     this.aaron = "";
     this.quests = [];
     this.actions = [];
+    this.achievements = [];
     this.oldGame = undefined;
     this.game = undefined;
     this.chosenActions = [];
@@ -50,39 +58,19 @@ export class QuestElement extends LitElement {
       this.oldGame = this.game;
       console.log("fetching level data");
       this.getQuestsData();
-      this.getActionsData();
     }
   }
 
-  getQuestsData() {
-    fetch(this.url + "gamification/quests/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.quests = data.rows;
-          console.log("done");
-          console.log(this.quests);
-        }
-      });
-  }
 
   _addQuest() {
     var questName = this.shadowRoot.querySelector("#addQuestNameInput").value;
     var questId = this.shadowRoot.querySelector("#addQuestIdInput").value;
-    var questDesc = this.shadowRoot.querySelector("#addQuestDescInput").value;
-    var questAchievementId = this.shadowRoot.querySelector(
-      "#addQuestAchievementInput"
-    ).value;
+    if(questId == ""){
+      window.alert("Please set the ID")
+      return;
+    }
+    var questDesc = "";
+    var questAchievementId = this.shadowRoot.querySelector("#achievementSelect").options[this.shadowRoot.querySelector("#achievementSelect").selectedIndex].text
     var questPoints = 0
     if (isNaN(questPoints)) {
       questPoints = 0;
@@ -143,27 +131,76 @@ export class QuestElement extends LitElement {
       });
   }
 
-  getActionsData() {
-    fetch(this.url + "gamification/actions/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
+  _updateQuest(quest) {
+    var questName = this.shadowRoot.querySelector("#addQuestNameInput").value;
+    if(questName == ""){
+      questName = null
+    }
+    var questDesc = "";
+    var questAchievementId = this.shadowRoot.querySelector(
+      "#addQuestAchievementInput"
+    ).value;
+    if(questAchievementId == ""){
+      questAchievementId = null
+    }
+    var questActionIds = [];
+    this.chosenActions.forEach((actionId) => {
+      console.log(this.shadowRoot.querySelector("#times" + actionId).value)
+      if(this.shadowRoot.querySelector("#times" + actionId).value > 0){
+        questActionIds.push({ times: parseInt(this.shadowRoot.querySelector("#times" + actionId).value), action: actionId });
+      } else {questActionIds.push({ times: 1, action: actionId });}
+      
+    });
+    if(questActionIds == []){
+      questActionIds = null
+    }
+    var status = "REVEALED";
+    var questquestflag = "False"
+    var questIds = this.shadowRoot.querySelector("#questSelect").options[this.shadowRoot.querySelector("#questSelect").selectedIndex].text
+    console.log(questIds)
+    if(questIds!="NONE" && questIds!= null && questIds!= ""){
+      status = "HIDDEN"
+      questquestflag = "True"
+      console.log("requirement set");
+      
+    } else {
+      questIds=null
+      status = null;
+    }
+    var contentB = {
+      questpointvalue: 0,
+      questname: questName,
+      questachievementid: questAchievementId,
+      questdescription: questDesc,
+      questquestflag: questquestflag,
+      questpointflag:"False",
+      questactionids:questActionIds,
+      questquestidcompleted:questIds,
+      questidcompleted:questIds,
+      queststatus:status,
+      questnotificationcheck:"False",
+      questnotificationmessage:""
+    };
+
+    let formData = new FormData();
+    formData.append("contentB", contentB);
+
+    fetch(this.url + "gamification/quests/" + this.game + "/" + quest.id, {
+      method: "PUT",
+      headers: { Authorization: this.aaron ,"Content-Type": "application/json"},
+      body: JSON.stringify(contentB),
     })
       .then((response) => {
-        console.log(response);
         if (response.ok) {
-          console.log("good response for get games gamers");
           return response.json();
         }
       })
       .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.actions = data.rows;
-          console.log("done");
-          console.log(this.actions);
-        }
+        this.getQuestsData();
       });
   }
+
+
   _addAction(actionId) {
     if (this.chosenActions.includes(actionId)) {
       const index = this.chosenActions.indexOf(actionId);
@@ -295,7 +332,6 @@ export class QuestElement extends LitElement {
             <div class="card-body text-dark">
               <h5 class="card-title">${quest.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${quest.id}</h6>
-              <p class="card-text">${quest.description}</p>
               <p class="card-text">Required Actions:</p>
               ${quest.actionIds.map(
                 (action) => html`
@@ -306,7 +342,7 @@ export class QuestElement extends LitElement {
                   </p>
                 `
               )}
-              <p class="card-text">Rewarded points: ${quest.pointValue}</p>
+              <p class="card-text">Required Quest: ${quest.questIdCompleted}</p>
               <p class="card-text">
                 Unlocked Achievement: ${quest.achievementId}
               </p>
@@ -314,14 +350,13 @@ export class QuestElement extends LitElement {
                 Notification message: ${quest.notificationMessage}
               </p>
               <a
-                href="#"
                 class="btn btn-primary"
                 id="buttonLevel${quest.number}"
                 @click="${() => this._deleteQuest(quest)}"
-                >Delete</a
-                
-              >    <a href="#" class="btn btn-primary"  @click="${() => this.moveUp(quest)}">UP</a>
-              <a href="#" class="btn btn-primary"  @click="${() => this.moveDown(quest)}">DOWN</a>
+                >Delete</a>
+                <a class="btn btn-primary" id=buttonLevel${quest.id} @click="${() => this._updateQuest(quest)}">Update</a>
+                <a class="btn btn-primary"  @click="${() => this.moveUp(quest)}">UP</a>
+              <a class="btn btn-primary"  @click="${() => this.moveDown(quest)}">DOWN</a>
            
             </div>
           </div>
@@ -361,20 +396,27 @@ export class QuestElement extends LitElement {
       )}
       <div class="form-floating mb-3">
         <input
-          id="addQuestDescInput"
-          class="form-control"
-          placeholder="Quest Description"
-        />
-        <label for="floatingInput">Quest Description</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
           id="addQuestAchievementInput"
           class="form-control"
           placeholder="Quest Achievement"
         />
         <label for="floatingInput">Quest AchievementId</label>
       </div>
+      <select id=achievementSelect class="form-select" aria-label="Default select example">
+      <option selected>Choose Achievement</option>
+      <option value="NONE">NONE</option>
+      <label class="form-check-label" for="flexCheckDefault">
+        NONE
+      </label>
+      ${this.achievements.map(
+        (achievement) => html`
+        <option value="${achievement.id}">${achievement.id}</option>
+          <label class="form-check-label" for="flexCheckDefault">
+            ${achievement.id}
+          </label>
+        `
+      )}
+    </select>
       <select id=questSelect class="form-select" aria-label="Default select example">
       <option selected>Choose Required Quest to Unlock</option>
       <option value="NONE">NONE</option>

@@ -22,6 +22,9 @@ export class LevelElement extends LitElement {
       levels: {
         type: Array,
       },
+      getLevelData:{
+        type:Function
+      }
     };
   }
   constructor() {
@@ -37,21 +40,17 @@ export class LevelElement extends LitElement {
     this.shadowRoot.shouldRefreshWithAnchoring = false
     console.log("iekrh2");
     const button = this.shadowRoot.querySelector("#reloadButtonLevel");
-    this.shadowRoot
-      .querySelector("#addLevelButton")
-      .addEventListener("click", (event) => this._addLevel());
   }
 
   updated() {
     console.log(this.game + "fetching level data" + this.levels.length);
     if (this.game != this.oldGame) {
       this.oldGame = this.game;
-      console.log("fetching level data");
-      this.getLevelData();
     }
   }
 
   _addLevel() {
+    console.log("qwefh jk sfehkfgs<fbmkshdf<kshflk a<sr<.kwjrhwelk h")
     var levelName = this.shadowRoot.querySelector("#addLevelNameInput").value;
     if (levelName == "") {
       console.log(this.levels)
@@ -141,27 +140,7 @@ export class LevelElement extends LitElement {
   }
 
   // i need to change the level service code, its just thrash atm
-  getLevelData() {
-    fetch(this.url + "gamification/levels/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.levels = data.rows;
-          console.log("done");
-          console.log(this.levels);
-        }
-      });
-  }
+
 
   _deleteLevel(level){
     var levelNumber = level.number
@@ -219,8 +198,8 @@ export class LevelElement extends LitElement {
               <h6 class="card-subtitle mb-2 text-muted">${level.number}</h6>
               <p class="card-text">Required points: ${level.pointValue}</p>
               <p class="card-text">Notification: ${level.notificationMessage}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${level.number} @click="${() => this._deleteLevel(level)}">Delete</a>
-              <a href="#" class="btn btn-primary" id=buttonLevel${level.id} @click="${() => this._updateLevel(level)}">Update</a>
+              <a class="btn btn-primary" id=buttonLevel${level.number} @click="${() => this._deleteLevel(level)}">Delete</a>
+              <a class="btn btn-primary" id=buttonLevel${level.id} @click="${() => this._updateLevel(level)}">Update</a>
             </div>
           </div>
         `

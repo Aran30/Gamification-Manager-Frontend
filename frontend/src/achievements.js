@@ -18,7 +18,10 @@ export class AchievementElement extends LitElement {
       },
       achievements: {
         type: Array,
-      }
+      },
+      getAchievementData: {
+        type: Function,
+      },
     };
   }
   constructor() {
@@ -44,28 +47,6 @@ export class AchievementElement extends LitElement {
       console.log("fetching level data");
       this.getAchievementData();
     }
-  }
-
-  getAchievementData() {
-    fetch(this.url + "gamification/achievements/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.achievements = data.rows;
-          console.log("done");
-          console.log(this.achievements);
-        }
-      });
   }
 
   _addAchievement() {
@@ -229,8 +210,8 @@ export class AchievementElement extends LitElement {
               <p class="card-text"> Rewarded points: ${achievement.pointValue}</p>
               <p class="card-text"> Rewarded badge: ${achievement.badgeId}</p>
               <p class="card-text"> Notification message: ${achievement.notificationMessage}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${achievement.number} @click="${() => this._deleteAchievement(achievement)}">Delete</a>
-              <a href="#" class="btn btn-primary" id=buttonLevel${achievement.id} @click="${() => this._updateAchievement(achievement)}">Update</a>
+              <a class="btn btn-primary" id=buttonLevel${achievement.number} @click="${() => this._deleteAchievement(achievement)}">Delete</a>
+              <a class="btn btn-primary" id=buttonLevel${achievement.id} @click="${() => this._updateAchievement(achievement)}">Update</a>
             </div>
           </div>
         `

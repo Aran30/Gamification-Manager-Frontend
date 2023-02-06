@@ -31,6 +31,9 @@ export class StreakElement extends LitElement {
       chosenAchievements: {
         type: Array,
       },
+      getStreaksData:{
+        type:Function
+      }
     };
   }
   constructor() {
@@ -58,32 +61,9 @@ export class StreakElement extends LitElement {
       this.oldGame = this.game;
       console.log("fetching level data");
       this.getStreaksData();
-      this.getActionsData();
-      this.getAchievementData();
     }
   }
 
-  getStreaksData() {
-    fetch(this.url + "gamification/streaks/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.streaks = data.rows;
-          console.log("done");
-          console.log(this.streaks);
-        }
-      });
-  }
 
   _addStreak() {
     var streakName = this.shadowRoot.querySelector("#addStreakNameInput").value;
@@ -157,27 +137,6 @@ export class StreakElement extends LitElement {
       });
   }
 
-  getActionsData() {
-    fetch(this.url + "gamification/actions/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.actions = data.rows;
-          console.log("done");
-          console.log(this.actions);
-        }
-      });
-  }
   _addAction(actionId) {
     if (this.chosenActions.includes(actionId)) {
       const index = this.chosenActions.indexOf(actionId);
@@ -216,27 +175,6 @@ export class StreakElement extends LitElement {
       });
   }
 
-  getAchievementData() {
-    fetch(this.url + "gamification/achievements/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.achievements = data.rows;
-          console.log("done");
-          console.log(this.achievements);
-        }
-      });
-  }
 
   returnTime(period){
     console.log("perido is " + period.split("PT")[1])
@@ -408,14 +346,6 @@ ${this.achievements.map(
           placeholder="Streak Description"
         />
         <label for="floatingInput">Streak Description</label>
-      </div>
-      <div class="form-floating mb-3">
-        <input
-          id="addStreakAchievementInput"
-          class="form-control"
-          placeholder="Streak Achievement"
-        />
-        <label for="floatingInput">Streak AchievementId</label>
       </div>
       <div class="form-floating mb-3">
         <button

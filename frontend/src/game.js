@@ -18,12 +18,30 @@ export class GameElement extends LitElement {
       games: {
         type: Array,
       },
+      levels: {
+        type: Array,
+      },
       url: {
         type: String,
       },
       gameId: {
         type: String,
       },
+      badges:{
+        type:Array
+      },
+      achievements:{
+        type:Array
+      },
+      actions:{
+        type:Array
+      },
+      quests:{
+        type:Array
+      },
+      streaks:{
+        type:Array
+      }
 
     };
   }
@@ -33,10 +51,16 @@ export class GameElement extends LitElement {
     this.gameChosen = false;
     if (this.games == null) {
       this.games = ["dd"];
+      this.levels = []
+      this.badges = []
+      this.actions = []
+      this.achievements = []
+      this.quests = []
+      this.streaks = []
     }
     this.url = "http://127.0.0.1:8080/"
   }
-
+//       this.getLevelData();
   firstUpdated(changedProperties) {
     console.log("iekrh");
     this.shadowRoot.shouldRefreshWithAnchoring = true
@@ -53,6 +77,47 @@ export class GameElement extends LitElement {
     this.checkAndRegisterUserAgent();
 
   }
+
+  getLevelData1() {
+    fetch(this.url + "gamification/levels/" + this.gameId, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        if (data != undefined) {
+          this.levels = data.rows;
+          this.getBadgeData1();
+        }
+      });
+  }
+
+  getBadgeData1() {
+    fetch(this.url + "gamification/badges/" + this.gameId, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        }
+      })
+      .then((data) => {
+        if (data != undefined) {
+          this.badges = data.rows;
+        }
+        this.getAchievementData1();
+      });
+  }
+
   handleLogin(event) {
     console.log(event.detail.profile);
     // Auth.setAuthDataToLocalStorage(event.detail.access_token);
@@ -104,10 +169,12 @@ export class GameElement extends LitElement {
       });
   }
   _onGameItemClicked(game) {
-    console.log("hello")
+    console.log("hello game chosen")
+    console.log(this.levels);
     this.gameId = game;
     console.log(game);
     this.gameChosen = !!game;
+    this.getLevelData1();
   }
 
   _addGame() {
@@ -191,7 +258,28 @@ export class GameElement extends LitElement {
 
     document.body.removeChild(element);
   }
-
+  getActionsData1() {
+    fetch(this.url + "gamification/actions/" + this.gameId, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log(data);
+        if (data != undefined) {
+          this.actions = data.rows
+        } else {
+          this.actions = []
+        }
+        this.getQuestsData1()
+      });
+  }
 
   getActionsData() {
     fetch(this.url + "gamification/actions/" + this.gameId, {
@@ -238,6 +326,31 @@ export class GameElement extends LitElement {
         this.getAchievementData();
       });
   }
+  getAchievementData1() {
+    console.log("fetched achievement ");
+    fetch(this.url + "gamification/achievements/" + this.gameId, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        }
+      })
+      .then((data) => {
+        console.log("fetched achievement data");
+        if (data != undefined) {
+          this.achievements = data.rows
+        } else {
+          this.achievements = []
+        }
+        this.getActionsData1();
+      });
+  }
+
+
 
   getAchievementData() {
     console.log("fetched achievement ");
@@ -286,6 +399,29 @@ export class GameElement extends LitElement {
       });
   }
 
+  getQuestsData1() {
+    fetch(this.url + "gamification/quests/" + this.gameId, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        }return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data != undefined) {
+          this.quests = data.rows
+        } else {
+          this.quests = []
+        }
+        this.getStreaksData1();
+      });
+  }
+
   getQuestsData() {
     fetch(this.url + "gamification/quests/" + this.gameId, {
       method: "GET",
@@ -327,6 +463,28 @@ export class GameElement extends LitElement {
         $("button#addnewgame").on('click', function(event) {
             $("#createnewgame").modal('toggle');
         });*/
+      });
+  }
+
+  getStreaksData1() {
+    fetch(this.url + "gamification/streaks/" + this.gameId, {
+      method: "GET",
+      headers: { Authorization: this.aaron },
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+          console.log("good response for get games gamers");
+          return response.json();
+        } return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data != undefined) {
+          this.streaks = data.rows
+        } else {
+          this.streaks = []
+        }
       });
   }
 
@@ -420,8 +578,11 @@ export class GameElement extends LitElement {
       var questId = quest["id"]
       var questDesc = quest["description"]
       var questAchievementId = quest["achievementId"]
+      console.log("achivement id is" + questAchievementId);
       var questPoints = quest["pointValue"]
       var wrongQuest = quest["actionIds"]
+      var status = quest["status"]
+      var questIdCompleted = quest["questIdCompleted"]
       for(var i = 0; i < wrongQuest.length; i++){
         var questObject = wrongQuest[i]
         questObject["action"] = questObject["actionId"]
@@ -438,8 +599,8 @@ export class GameElement extends LitElement {
         questquestflag: "False",
         questpointflag: "False",
         questactionids: questActionIds,
-        questquestidcompleted: "",
-        queststatus: "REVEALED",
+        questquestidcompleted: questIdCompleted,
+        queststatus: status,
         questnotificationcheck: "False"
       };
 
@@ -511,11 +672,7 @@ export class GameElement extends LitElement {
     }
   }
 
-
-
-
-      
-      
+ 
       addBadgesFromFile(gameJSON) {
     if (gameJSON["badges"] == undefined || gameJSON["badges"][0] == undefined) {
       this.addAchievementsFromFile(gameJSON)
@@ -555,9 +712,6 @@ export class GameElement extends LitElement {
               }
             });
         })
-
-
-
     }
   }
 
@@ -685,7 +839,9 @@ export class GameElement extends LitElement {
       });
   }
 
-
+  test(){
+    window.alert("kakakakak")
+  }
 
   uploadGameFile() {
     var gameJSON = this.shadowRoot.querySelector(
@@ -743,7 +899,6 @@ export class GameElement extends LitElement {
 ${this.games.map(
       (game) => html`
     <a
-      href="#"
       class="list-group-item list-group-item-action"
       @click="${() => this._onGameItemClicked(game)}"
     >
@@ -752,12 +907,12 @@ ${this.games.map(
   `
     )}
 
-<level-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url}></level-element>
-<badge-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url}></badge-element>
-<achievement-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url}></achievement-element>
-<action-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url}></action-element>
-<quest-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url}></quest-element>
-<streak-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url}></streak-element>
+<level-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url} .levels=${this.levels} .getLevelData=${() => {this.getLevelData1()}}></level-element>
+<badge-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url} .badges=${this.badges} .getBadgeData=${() => {this.getBadgeData1()}}></badge-element>
+<achievement-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url} .badges=${this.badges} .achievements=${this.achievements} .getAchievementData=${() => {this.getAchievementData1()}}></achievement-element>
+<action-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url} .actions=${this.actions} .getActionsData=${() => {this.getActionsData1()}}></action-element>
+<quest-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url} .achievements=${this.achievements} .actions=${this.actions} .quests=${this.quests} .getQuestsData=${() => {this.getQuestsData1()}}></quest-element>
+<streak-element .aaron=${this.aaron} .game=${this.gameId} .url=${this.url} .actions=${this.actions} .streaks=${this.streaks} .achievements=${this.achievements} .getStreaksData=${() => {this.getStreaksData1()}}></streak-element>
 <button type="button" class="btn btn-primary btn-lg" @click="${() => this.downloadGameFile()}">Download (This might take a while)</button>
 
 <button type="button" class="btn btn-primary btn-lg" @click="${() => this.uploadGameFile()}">Upload Game (This might take even more of a while)</button>

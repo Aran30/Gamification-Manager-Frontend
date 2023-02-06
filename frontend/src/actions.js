@@ -19,6 +19,9 @@ export class ActionElement extends LitElement {
       actions: {
         type: Array,
       },
+      getActionsData:{
+        type: Function
+      }
     };
   }
   constructor() {
@@ -41,29 +44,9 @@ export class ActionElement extends LitElement {
     if (this.game != this.oldGame) {
       this.oldGame = this.game;
       console.log("fetching level data");
-      this.getActionsData();
     }
   }
 
-  getActionsData() {
-    fetch(this.url + "gamification/actions/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.actions = data.rows;
-        }
-      });
-  }
 
   _addAction() {
     var actionName = this.shadowRoot.querySelector("#addActionNameInput").value;
@@ -218,13 +201,12 @@ export class ActionElement extends LitElement {
                 Notification message: ${action.notificationMessage}
               </p>
               <a
-                href="#"
                 class="btn btn-primary"
                 id="buttonLevel${action.number}"
                 @click="${() => this._deleteAction(action)}"
                 >Delete</a
               >
-              <a href="#" class="btn btn-primary" id=buttonLevel${action.id} @click="${() => this._updateAction(action)}">Update</a>
+              <a class="btn btn-primary" id=buttonLevel${action.id} @click="${() => this._updateAction(action)}">Update</a>
             </div>
           </div>
         `

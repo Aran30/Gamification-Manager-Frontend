@@ -19,6 +19,9 @@ export class BadgeElement extends LitElement {
       badges: {
         type: Array,
       },
+      getBadgeData:{
+        type:Function
+      }
     };
   }
   constructor() {
@@ -43,31 +46,11 @@ export class BadgeElement extends LitElement {
     if (this.game != this.oldGame) {
       this.oldGame = this.game;
       console.log("fetching level data");
-      this.getBadgeData();
+    //  this.getBadgeData();
     }
   }
 
-  getBadgeData() {
-    fetch(this.url + "gamification/badges/" + this.game, {
-      method: "GET",
-      headers: { Authorization: this.aaron },
-    })
-      .then((response) => {
-        console.log(response);
-        if (response.ok) {
-          console.log("good response for get games gamers");
-          return response.json();
-        }
-      })
-      .then((data) => {
-        console.log(data);
-        if (data != undefined) {
-          this.badges = data.rows;
-          console.log("done");
-          console.log(this.badges);
-        }
-      });
-  }
+  
 
   _addBadge() {
     var badgeName = this.shadowRoot.querySelector("#addBadgeNameInput").value;
@@ -222,8 +205,8 @@ export class BadgeElement extends LitElement {
               <h5 class="card-title">${badge.name}</h5>
               <h6 class="card-subtitle mb-2 text-muted">${badge.id}</h6>
               <p class="card-text">Required points: ${badge.description}</p>
-              <a href="#" class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._deleteBadge(badge)}">Delete</a>
-              <a href="#" class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._updateBadge(badge)}">Update</a>
+              <a class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._deleteBadge(badge)}">Delete</a>
+              <a class="btn btn-primary" id=buttonLevel${badge.id} @click="${() => this._updateBadge(badge)}">Update</a>
             </div>
           </div>
         `
