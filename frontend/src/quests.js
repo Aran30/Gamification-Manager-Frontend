@@ -151,7 +151,10 @@ export class QuestElement extends LitElement {
       } else {questActionIds.push({ times: 1, action: actionId });}
       
     });
-    if(questActionIds == []){
+    console.log("action ids")
+    console.log(questActionIds)
+    if(questActionIds.length == 0){
+      console.log("action id is empty")
       questActionIds = null
     }
     var status = "REVEALED";
