@@ -69,9 +69,6 @@ export class StreakElement extends LitElement {
     var streakName = this.shadowRoot.querySelector("#addStreakNameInput").value;
     var streakId = this.shadowRoot.querySelector("#addStreakIdInput").value;
     var streakDesc = this.shadowRoot.querySelector("#addStreakDescInput").value;
-    var streakAchievementId = this.shadowRoot.querySelector(
-      "#addStreakAchievementInput"
-    ).value;
     var streakDay = this.shadowRoot.querySelector("#days").value
     var streakMinutes = this.shadowRoot.querySelector("#minutes").value
     var streakHours = this.shadowRoot.querySelector("#hours").value
