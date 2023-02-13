@@ -263,7 +263,6 @@ export class StreakElement extends LitElement {
                 Notification message: ${streak.notificationMessage}
               </p>
               <a
-                href="#"
                 class="btn btn-primary"
                 id="buttonLevel${streak.streakId}"
                 @click="${() => this._deleteStreak(streak)}"
